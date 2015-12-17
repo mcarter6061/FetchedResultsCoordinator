@@ -1,0 +1,19 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'FetchedResultsCoordinator_Example', :exclusive => true do
+  pod "FetchedResultsCoordinator", :path => "../"
+end
+
+target 'FetchedResultsCoordinator_Tests', :exclusive => true do
+  pod "FetchedResultsCoordinator", :path => "../"
+  pod 'Specta'
+  pod 'Expecta'
+  pod 'OCMock'
+  pod 'Expecta+OCMock'
+#  pod 'Kiwi'
+#  pod 'Quick', '~> 0.3.1'
+#  pod 'Nimble'
+#  pod 'FBSnapshotTestCase'
+#  pod 'Nimble-Snapshots'
+end
