@@ -8,7 +8,7 @@
         <!--Data View Controller-->
         <scene sceneID="VI5-fH-5kg">
             <objects>
-                <viewController id="2vY-yb-AGG" customClass="DataViewController" customModule="FetchedResultsDataSource_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="2vY-yb-AGG" customClass="DataViewController" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="39d-mE-phC"/>
                         <viewControllerLayoutGuide type="bottom" id="has-85-FFV"/>
@@ -17,8 +17,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3uV-vz-VbQ">
-                                <rect key="frame" x="260" y="308" width="79" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3uV-vz-VbQ">
+                                <rect key="frame" x="260" y="309" width="79" height="30"/>
                                 <state key="normal" title="Start Demo"/>
                                 <connections>
                                     <segue destination="fDb-1o-FRu" kind="show" id="XnX-DI-fTR"/>
@@ -30,26 +30,26 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="751" verticalHuggingPriority="251" misplaced="YES" text="20 items" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2NT-Bp-BVp">
-                                <rect key="frame" x="463" y="106" width="67" height="20"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="751" verticalHuggingPriority="251" text="20 items" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2NT-Bp-BVp">
+                                <rect key="frame" x="463" y="106" width="67" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="FDg-a2-vD4">
-                                <rect key="frame" x="222" y="147" width="310" height="31"/>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="10" translatesAutoresizingMaskIntoConstraints="NO" id="FDg-a2-vD4">
+                                <rect key="frame" x="211" y="147" width="321" height="31"/>
                                 <connections>
                                     <action selector="sectionCountSliderChanged:" destination="2vY-yb-AGG" eventType="valueChanged" id="lFq-mk-v9u"/>
                                 </connections>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="across 1 section" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hi7-d9-jtZ">
-                                <rect key="frame" x="70" y="151" width="134" height="20"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="across 1 section" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hi7-d9-jtZ">
+                                <rect key="frame" x="70" y="151" width="123" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="20" minValue="1" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="GX7-0f-bpc">
-                                <rect key="frame" x="68" y="101" width="378" height="31"/>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="20" minValue="1" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="GX7-0f-bpc">
+                                <rect key="frame" x="68" y="101" width="377" height="31"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="80" id="8Zf-cj-jcd"/>
                                 </constraints>
@@ -62,8 +62,8 @@
                                     <action selector="itemCountSliderChanged:" destination="2vY-yb-AGG" eventType="valueChanged" id="4Ic-Wm-HTd"/>
                                 </connections>
                             </slider>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZxG-S5-gKz">
-                                <rect key="frame" x="40" y="187" width="520" height="101"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZxG-S5-gKz">
+                                <rect key="frame" x="40" y="187" width="520" height="102"/>
                                 <string key="text">demo data will be randomly altered to cause inserts, delete, moves, and updates to items and sections that will be observed by the Fetched Results Controller and passed to it's delegate, our FetchedResultsCoordinator custom class which will sync changes to the table and collection views.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -107,7 +107,7 @@
         <!--Table View Subview-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" userLabel="Table View Subview" customClass="ExampleTableViewSubviewController" customModule="FetchedResultsDataSource_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="vXZ-lx-hvc" userLabel="Table View Subview" customClass="ExampleTableViewSubviewController" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -175,7 +175,7 @@
         <!--Table Example Settings-->
         <scene sceneID="28K-hU-GmU">
             <objects>
-                <tableViewController id="5Qd-CI-yXw" customClass="TableSettingsViewController" customModule="FetchedResultsDataSource_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="5Qd-CI-yXw" customClass="TableSettingsViewController" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="wUU-Qo-54Q">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -225,8 +225,8 @@
                                                         <action selector="showTableIndexChanged:" destination="5Qd-CI-yXw" eventType="valueChanged" id="pRt-Id-UBG"/>
                                                     </connections>
                                                 </switch>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Show Table Index" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lP7-RS-wmG">
-                                                    <rect key="frame" x="18" y="12" width="134" height="20"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Table Index" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lP7-RS-wmG">
+                                                    <rect key="frame" x="18" y="11" width="134" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
@@ -253,8 +253,8 @@
                                                         <action selector="tableCoordinatorPausedChanged:" destination="5Qd-CI-yXw" eventType="valueChanged" id="PMW-OQ-ARG"/>
                                                     </connections>
                                                 </switch>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Table Coordinator Paused" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P77-v5-Mtr">
-                                                    <rect key="frame" x="18" y="12" width="198" height="20"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Table Coordinator Paused" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P77-v5-Mtr">
+                                                    <rect key="frame" x="18" y="11" width="198" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
@@ -312,7 +312,7 @@
         <!--Table Example-->
         <scene sceneID="viC-GI-heQ">
             <objects>
-                <tableViewController automaticallyAdjustsScrollViewInsets="NO" id="oCh-lW-CpD" customClass="ExampleTableViewController" customModule="FetchedResultsDataSource_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController automaticallyAdjustsScrollViewInsets="NO" id="oCh-lW-CpD" customClass="ExampleTableViewController" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="82M-LY-Prf">
                         <rect key="frame" x="0.0" y="94" width="600" height="457"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -385,7 +385,7 @@
         <!--Collection Example-->
         <scene sceneID="gBm-b5-EfG">
             <objects>
-                <collectionViewController id="hHR-YL-SWy" customClass="ExampleCollectionViewController" customModule="FetchedResultsDataSource_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController id="hHR-YL-SWy" customClass="ExampleCollectionViewController" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="RZw-UC-QBl">
                         <rect key="frame" x="0.0" y="94" width="600" height="506"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -396,7 +396,7 @@
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ECVCCellReuseIdentifier" id="UPG-cR-1uD" customClass="ExampleCollectionViewCell" customModule="FetchedResultsDataSource_Example" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ECVCCellReuseIdentifier" id="UPG-cR-1uD" customClass="ExampleCollectionViewCell" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="50" width="200" height="100"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -424,7 +424,7 @@
                                 </connections>
                             </collectionViewCell>
                         </cells>
-                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ECVCHeaderReuseIdentifier" id="xpT-d6-Kt7" customClass="ExampleCollectionViewHeader" customModule="FetchedResultsDataSource_Example" customModuleProvider="target">
+                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ECVCHeaderReuseIdentifier" id="xpT-d6-Kt7" customClass="ExampleCollectionViewHeader" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
@@ -473,7 +473,7 @@
         <!--Collection View Subview-->
         <scene sceneID="kk5-B2-gTD">
             <objects>
-                <viewController id="ghO-nz-EHQ" userLabel="Collection View Subview" customClass="ExampleCollectionViewSubviewController" customModule="FetchedResultsDataSource_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="ghO-nz-EHQ" userLabel="Collection View Subview" customClass="ExampleCollectionViewSubviewController" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5H5-09-VU4"/>
                         <viewControllerLayoutGuide type="bottom" id="gT5-R1-lGD"/>
@@ -491,7 +491,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ECVSCCellReuseIdentifier" id="wfT-ar-r3z" customClass="ExampleCollectionViewCell" customModule="FetchedResultsDataSource_Example" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ECVSCCellReuseIdentifier" id="wfT-ar-r3z" customClass="ExampleCollectionViewCell" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="200" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -529,7 +529,7 @@
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
-                                <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ECVSCHeaderReuseIdentifier" id="wct-aF-zqT" customClass="ExampleCollectionViewHeader" customModule="FetchedResultsDataSource_Example" customModuleProvider="target">
+                                <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ECVSCHeaderReuseIdentifier" id="wct-aF-zqT" customClass="ExampleCollectionViewHeader" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
