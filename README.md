@@ -26,7 +26,7 @@ The most common usage is likely in a controller class which owns a FetchedResult
 or for a collection view:
 
 ```swift
-    frcCoordinator = FetchedResultsCoordinator( tableView: self.tableView!, fetchedResultsController: self.fetchedResultsController, cellConfigurator: self )
+    frcCoordinator = FetchedResultsCoordinator( collectionView: self.collectionView!, fetchedResultsController: self.fetchedResultsController, cellConfigurator: self )
 ```
 
 When you are ready to load the data call `loadData()` on the coordinator and it will perform the fetch on the FRC and tell the table or collection view to reload its data.  This is used in place of the FRC `performFetch()`, which should not be called directly when using the coordinator.
