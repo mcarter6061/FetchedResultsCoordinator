@@ -58,7 +58,7 @@ There is more boilerplate code to implement `UITableViewDataSource` and `UIColle
 ### Table View Data Source
 
 ```swift
-    tableViewDataSource = SimpleTableDataSource( configurator: self, fetchedResultsController: fetchedResultsController )
+tableViewDataSource = SimpleTableDataSource( configurator: self, fetchedResultsController: fetchedResultsController )
 ```
 
 the configurator object ( most likely your table view controller ) must conform to `TableCellConfigurator` protocol.
@@ -74,7 +74,7 @@ public protocol TableCellConfigurator {
 
 Those two methods and instantiating a SimpleTableDataSource is enough to get a table view up and running.
 
-`cellReuseIdentifierForObject( object: NSManagedObject )` can just return a hardcoded identifier if the table only has one prototype cell.  This must be the cell's reuse identifier in your xib / storyboard.  If the table has multiple prototype cells the method should return the reuse identifier that applies to the row for the given associated model object.  
+`cellReuseIdentifierForObject` can just return a hardcoded identifier if the table only has one prototype cell.  This must be the cell's reuse identifier in your xib / storyboard.  If the table has multiple prototype cells the method should return the reuse identifier that applies to the row for the given associated model object.  
 
 The coordinator will use the identifier returned to dequeue cells, and it will call the cell configurator `configureCell` to give you a chance to configure the cell with the data from the object for that row.
 
@@ -84,14 +84,14 @@ The data source also supports table view system headers and table view indexes b
 tableViewDataSource?.systemHeaders = true
 tableViewDataSource?.tableIndex = true
 ```
-When `systemHeaders` is set the section name from the FRC will be set as the title of each section header.  When `tableIndex` is set the table view will display the section index, using the capitalized first letter of each section name in the FRC. See the subclassing notes of the NSFetchedResultsController delegate for a discussion on how to customize the section indexs.
+When `systemHeaders` is set the section name from the FRC will be set as the title of each section header.  When `tableIndex` is set the table view will display the section index, using the capitalized first letter of each section name in the FRC. See the subclassing notes of the NSFetchedResultsController documentation for a discussion on how to customize the section indexs.
 
 See the Example project `ExampleTableViewController` class for an example of how to use a `SimpleTableDataSource` in a `UITableViewController` subclass.  See the `ExampleTableViewSubviewController` class for an example of how to use a `SimpleTableDataSource` in a `UIViewController` subclass that has a `UITableView` subview.
 
 ### Collection View Data Source
 
 ```swift
-            collectionViewDataSource = SimpleCollectionDataSource( fetchedResultsController: self.fetchedResultsController, cellConfigurator: self, supplementaryViewConfigurator: self )
+collectionViewDataSource = SimpleCollectionDataSource( fetchedResultsController: self.fetchedResultsController, cellConfigurator: self, supplementaryViewConfigurator: self )
 ```
 
 The collection data source has two configurators, one for cells and one for supplementary views.  
