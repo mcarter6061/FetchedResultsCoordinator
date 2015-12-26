@@ -8,7 +8,7 @@ import UIKit
 @objc public protocol CollectionCellConfigurator {
     
     func configureCell( cell: UICollectionViewCell, withManagedObject: NSManagedObject )
-    func cellReuseIdentifierForObject( object: NSManagedObject ) -> String
+    func cellReuseIdentifierForManagedObject( managedObject: NSManagedObject ) -> String
 }
 
 @objc public protocol CollectionViewSupplementaryViewConfigurator {
@@ -67,7 +67,7 @@ public class SimpleCollectionDataSource: NSObject, UICollectionViewDataSource {
         
         let object = fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
         
-        let reuseIdentifier = cellConfigurator.cellReuseIdentifierForObject(object)
+        let reuseIdentifier = cellConfigurator.cellReuseIdentifierForManagedObject(object)
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath)
         

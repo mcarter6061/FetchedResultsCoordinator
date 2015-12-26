@@ -43,7 +43,7 @@ class ExampleTableViewSubviewController: UIViewController, TableCellConfigurator
         cell.textLabel!.text = managedObject.name
     }
     
-    func cellReuseIdentifierForObject(object: NSManagedObject) -> String {
+    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String {
         return "ETVSCCellReuseIdentifier"
     }
     

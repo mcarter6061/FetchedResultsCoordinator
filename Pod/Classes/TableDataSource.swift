@@ -9,7 +9,7 @@ import UIKit
    
     func configureCell( cell: UITableViewCell, withManagedObject: NSManagedObject )
     
-    func cellReuseIdentifierForObject( object: NSManagedObject ) -> String
+    func cellReuseIdentifierForManagedObject( managedObject: NSManagedObject ) -> String
 }
 
 
@@ -50,7 +50,7 @@ public class SimpleTableDataSource: NSObject, UITableViewDataSource {
         
         let object = fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
         
-        let reuseIdentifier = configurator.cellReuseIdentifierForObject(object)
+        let reuseIdentifier = configurator.cellReuseIdentifierForManagedObject(object)
         
         let cell = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier, forIndexPath: indexPath)
         

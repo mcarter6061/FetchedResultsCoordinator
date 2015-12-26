@@ -56,7 +56,7 @@ class ExampleCollectionViewController: UICollectionViewController, CollectionCel
         cell.textLabel?.text = managedObject.name
     }
     
-    func cellReuseIdentifierForObject(object: NSManagedObject) -> String {
+    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String {
         return "ECVCCellReuseIdentifier"
     }
 

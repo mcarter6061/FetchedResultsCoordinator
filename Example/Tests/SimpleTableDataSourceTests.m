@@ -25,7 +25,7 @@ describe(@"SimpleTableDataSource", ^{
         mockObject = OCMClassMock([NSManagedObject class]);
         
         mockCellConfigurator = OCMProtocolMock(@protocol(TableCellConfigurator));
-        OCMStub([mockCellConfigurator cellReuseIdentifierForObject:mockObject]).andReturn(reuseIdentifier);
+        OCMStub([mockCellConfigurator cellReuseIdentifierForManagedObject:mockObject]).andReturn(reuseIdentifier);
         
         dataSource = [[SimpleTableDataSource alloc] initWithCellConfigurator:mockCellConfigurator fetchedResultsController:mockFRC];
     });
