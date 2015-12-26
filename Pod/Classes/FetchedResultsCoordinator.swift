@@ -4,7 +4,7 @@ import Foundation
 import CoreData
 import UIKit
 
-public class FetchedResultsCoordinator: NSObject,NSFetchedResultsControllerDelegate {
+public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDelegate {
     
     public var paused = false {
         didSet {
