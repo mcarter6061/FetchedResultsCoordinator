@@ -65,7 +65,7 @@ protocol Coordinatable {
 extension UITableView: Coordinatable {
     
     func apply(changeSet: ChangeSet, applyUpdate: ApplyUpdateChange? ) {
-        print( changeSet.description() )
+
         self.beginUpdates()
         
         if changeSet.deletedSections.count > 0 {

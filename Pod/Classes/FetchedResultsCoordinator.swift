@@ -79,12 +79,6 @@ public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDele
     
     public func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
 
-        
-        // if there is an indexPath ( delete, move, update ) -
-        // newIndexPath ( insert, move )
-        
-        print("didChangeObject: changeType \(type.description) atIndexPath \(indexPath) newIndexPath \(newIndexPath)")
-        
         switch type {
         case .Delete where !changes.indexPathInDeletedSection(indexPath!):
             changes.deletedItems.append(indexPath!)
@@ -111,7 +105,6 @@ public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDele
     }
     
     public func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
-        print("didChangeSection: changeType \(type.description) section \(sectionIndex)")
 
         switch type {
         case .Insert:
@@ -127,22 +120,4 @@ public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDele
     // NOTE: sectionIndexTitleForSectionName is not implemented, if you do not want default behaviour ( section index is section name's first letter capitalized ) you must override FetchedResultsCoordinator with your own implementation.
     //optional public func controller(controller: NSFetchedResultsController, sectionIndexTitleForSectionName sectionName: String) -> String?
     
-}
-
-extension NSFetchedResultsChangeType {
-    
-    var description : String {
-        get {
-            switch(self) {
-            case .Insert:
-                return "Insert"
-            case .Delete:
-                return "Delete"
-            case .Update:
-                return "Update"
-            case .Move:
-                return "Move"
-            }
-        }
-    }
 }
