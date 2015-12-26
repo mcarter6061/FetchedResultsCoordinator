@@ -39,6 +39,7 @@ class ExampleTableViewSubviewController: UIViewController, TableCellConfigurator
     
     func configureCell(cell: UITableViewCell, withManagedObject managedObject: NSManagedObject) {
         guard let managedObject = managedObject as? Item else { return }
+        
         cell.textLabel!.text = managedObject.name
     }
     
