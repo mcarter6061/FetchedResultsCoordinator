@@ -25,9 +25,9 @@ describe(@"SimpleTableDataSource", ^{
         mockObject = OCMClassMock([NSManagedObject class]);
         
         mockCellConfigurator = OCMProtocolMock(@protocol(TableCellConfigurator));
-        OCMStub([mockCellConfigurator cellReuseIdentifierForObject:mockObject]).andReturn(reuseIdentifier);
+        OCMStub([mockCellConfigurator cellReuseIdentifierForManagedObject:mockObject]).andReturn(reuseIdentifier);
         
-        dataSource = [[SimpleTableDataSource alloc] initWithConfigurator:mockCellConfigurator fetchedResultsController:mockFRC];
+        dataSource = [[SimpleTableDataSource alloc] initWithCellConfigurator:mockCellConfigurator fetchedResultsController:mockFRC];
     });
     
     it(@"should create a data source", ^{
@@ -56,7 +56,7 @@ describe(@"SimpleTableDataSource", ^{
         OCMStub([mockTableView dequeueReusableCellWithIdentifier:reuseIdentifier forIndexPath:zeroIndexPath]).andReturn(mockCell);
         
         [dataSource tableView:mockTableView cellForRowAtIndexPath:zeroIndexPath];
-        OCMVerify([mockCellConfigurator configureCell:mockCell withObject:mockObject]);
+        OCMVerify([mockCellConfigurator configureCell:mockCell withManagedObject:mockObject]);
     });
 
     context(@"with two sections", ^{

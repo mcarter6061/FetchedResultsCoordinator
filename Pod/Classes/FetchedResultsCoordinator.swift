@@ -4,7 +4,7 @@ import Foundation
 import CoreData
 import UIKit
 
-public class FetchedResultsCoordinator: NSObject,NSFetchedResultsControllerDelegate {
+public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDelegate {
     
     public var paused = false {
         didSet {
@@ -30,7 +30,7 @@ public class FetchedResultsCoordinator: NSObject,NSFetchedResultsControllerDeleg
         if let cellConfigurator = cellConfigurator {
             self.reconfigureVisibleCell = { (indexPath, object) in
                 if let cell = collectionView.cellForItemAtIndexPath(indexPath) {
-                    cellConfigurator.configureCell(cell, withObject: object)
+                    cellConfigurator.configureCell(cell, withManagedObject: object)
                 }
             }
         }
@@ -46,7 +46,7 @@ public class FetchedResultsCoordinator: NSObject,NSFetchedResultsControllerDeleg
         if let cellConfigurator = cellConfigurator {
             self.reconfigureVisibleCell = {
                 if let cell = tableView.cellForRowAtIndexPath($0) {
-                    cellConfigurator.configureCell(cell, withObject:$1)
+                    cellConfigurator.configureCell(cell, withManagedObject:$1)
                 }
             }
         }

@@ -7,9 +7,9 @@ import UIKit
 
 @objc public protocol TableCellConfigurator {
    
-    func configureCell( cell: UITableViewCell, withObject: NSManagedObject )
+    func configureCell( cell: UITableViewCell, withManagedObject managedObject: NSManagedObject )
     
-    func cellReuseIdentifierForObject( object: NSManagedObject ) -> String
+    func cellReuseIdentifierForManagedObject( managedObject: NSManagedObject ) -> String
 }
 
 
@@ -20,8 +20,8 @@ public class SimpleTableDataSource: NSObject, UITableViewDataSource {
     public var systemHeaders: Bool = false
     public var tableIndex: Bool = false
     
-    public init( configurator: TableCellConfigurator, fetchedResultsController: NSFetchedResultsController ) {
-        self.configurator = configurator
+    public init( cellConfigurator: TableCellConfigurator, fetchedResultsController: NSFetchedResultsController ) {
+        self.configurator = cellConfigurator
         self.fetchedResultsController = fetchedResultsController
         super.init()
     }
@@ -50,11 +50,11 @@ public class SimpleTableDataSource: NSObject, UITableViewDataSource {
         
         let object = fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
         
-        let reuseIdentifier = configurator.cellReuseIdentifierForObject(object)
+        let reuseIdentifier = configurator.cellReuseIdentifierForManagedObject(object)
         
         let cell = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier, forIndexPath: indexPath)
         
-        configurator.configureCell(cell, withObject: object)
+        configurator.configureCell(cell, withManagedObject: object)
         
         return cell
     }

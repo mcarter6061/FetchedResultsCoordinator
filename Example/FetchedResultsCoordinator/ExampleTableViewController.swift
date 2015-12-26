@@ -17,7 +17,7 @@ class ExampleTableViewController: UITableViewController, TableCellConfigurator, 
         super.viewDidLoad()
         
         if tableViewDataSource == nil {
-            tableViewDataSource = SimpleTableDataSource( configurator: self, fetchedResultsController: fetchedResultsController )
+            tableViewDataSource = SimpleTableDataSource( cellConfigurator: self, fetchedResultsController: fetchedResultsController )
             tableViewDataSource?.systemHeaders = true
         }
         tableView.dataSource = tableViewDataSource
@@ -36,13 +36,13 @@ class ExampleTableViewController: UITableViewController, TableCellConfigurator, 
     
     // MARK: - TableCellConfigurator methods
     
-    func configureCell(cell: UITableViewCell, withObject: NSManagedObject) {
-        if let withObject = withObject as? Item {
-            cell.textLabel!.text = withObject.name
-        }
+    func configureCell(cell: UITableViewCell, withManagedObject managedObject: NSManagedObject) {
+        guard let managedObject = managedObject as? Item else { return }
+        
+        cell.textLabel!.text = managedObject.name
     }
     
-    func cellReuseIdentifierForObject(object: NSManagedObject) -> String {
+    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String {
         return "ETVCCellReuseIdentifier"
     }
     

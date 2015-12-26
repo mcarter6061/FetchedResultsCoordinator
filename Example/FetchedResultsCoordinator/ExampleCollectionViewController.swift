@@ -48,15 +48,15 @@ class ExampleCollectionViewController: UICollectionViewController, CollectionCel
     
     // MARK: - CollectionCellConfigurator methods
 
-    func configureCell(cell: UICollectionViewCell, withObject: NSManagedObject) {
+    func configureCell(cell: UICollectionViewCell, withManagedObject managedObject: NSManagedObject) {
         
-        if let cell = cell as? ExampleCollectionViewCell,
-            let withObject = withObject as? Item {
-                cell.textLabel!.text = withObject.name
-        }
+        guard let cell = cell as? ExampleCollectionViewCell else { return }
+        guard let managedObject = managedObject as? Item else { return }
+        
+        cell.textLabel?.text = managedObject.name
     }
     
-    func cellReuseIdentifierForObject(object: NSManagedObject) -> String {
+    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String {
         return "ECVCCellReuseIdentifier"
     }
 
@@ -68,10 +68,10 @@ class ExampleCollectionViewController: UICollectionViewController, CollectionCel
     
     func configureView( view: UICollectionReusableView, ofKind: String, atIndexPath: NSIndexPath ) {
         
-        if let view = view as? ExampleCollectionViewHeader {
-            let sectionName = dataSource?.sectionInfoForSection( atIndexPath.section )?.name
-            view.textLabel.text = sectionName
-        }
+        guard let view = view as? ExampleCollectionViewHeader else { return }
+
+        let sectionName = dataSource?.sectionInfoForSection( atIndexPath.section )?.name
+        view.textLabel.text = sectionName
     }
 
 }

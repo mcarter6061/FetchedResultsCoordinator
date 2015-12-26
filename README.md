@@ -37,7 +37,7 @@ When you are ready to load the data call `loadData` on the coordinator and it wi
 
 After calling `loadData` all changes observed by the FRC will be reflected in the table/collection view.
 
-### reloading vs reconfiguring cells
+### Reloading vs reconfiguring cells
 
 The initialisation parameter `cellConfigurator` is optional.  Providing one will let the coordinator call your cell configuration code again for an updated object rather than asking the table/collection view to reload that row/cell (which may cause an undesirable animation for that row/cell).  See the sections of this document for the `SimpleTableViewDataSource` and `SimpleCollectionDataSource` for more discussion of the cell configurator protocols.
 
@@ -58,23 +58,24 @@ There is more boilerplate code to implement `UITableViewDataSource` and `UIColle
 ### Table View Data Source
 
 ```swift
-tableViewDataSource = SimpleTableDataSource( configurator: self, fetchedResultsController: fetchedResultsController )
+tableViewDataSource = SimpleTableDataSource( cellConfigurator: self, fetchedResultsController: fetchedResultsController )
+tableView.dataSource = tableViewDataSource
 ```
 
-the configurator object ( most likely your table view controller ) must conform to `TableCellConfigurator` protocol.
+The cellConfigurator object (most likely your table view controller) must conform to the `TableCellConfigurator` protocol.
 
 ```swift
 public protocol TableCellConfigurator {
    
-    func configureCell( cell: UITableViewCell, withObject: NSManagedObject )
+    func configureCell( cell: UITableViewCell, withManagedObject managedObject: NSManagedObject )
     
-    func cellReuseIdentifierForObject( object: NSManagedObject ) -> String
+    func cellReuseIdentifierForManagedObject( managedObject: NSManagedObject ) -> String
 }
 ```
 
-Those two methods and instantiating a SimpleTableDataSource is enough to get a table view up and running.
+Those two methods and hooking up a SimpleTableDataSource to your table view's dataSource is enough to get a table view up and running. Be aware that the dataSource property on `UITableView` is weak, which means you will need to hold another strong reference to it elsewhere.
 
-`cellReuseIdentifierForObject` can just return a hardcoded identifier if the table only has one prototype cell.  This must be the cell's reuse identifier in your xib / storyboard.  If the table has multiple prototype cells the method should return the reuse identifier that applies to the row for the given associated model object.  
+`cellReuseIdentifierForManagedObject` can just return a hardcoded identifier if the table only has one prototype cell.  This must be the cell's reuse identifier in your xib / storyboard.  If the table has multiple prototype cells the method should return the reuse identifier that applies to the row for the given associated model object.  
 
 The coordinator will use the identifier returned to dequeue cells, and it will call the cell configurator `configureCell` to give you a chance to configure the cell with the data from the object for that row.
 
@@ -99,8 +100,8 @@ The collection data source has two configurators, one for cells and one for supp
 ```swift
 @objc public protocol CollectionCellConfigurator {
     
-    func configureCell( cell: UICollectionViewCell, withObject: NSManagedObject )
-    func cellReuseIdentifierForObject( object: NSManagedObject ) -> String
+    func configureCell( cell: UICollectionViewCell, withManagedObject managedObject: NSManagedObject )
+    func cellReuseIdentifierForManagedObject( managedObject: NSManagedObject ) -> String
 }
 
 @objc public protocol CollectionViewSupplementaryViewConfigurator {
@@ -110,7 +111,7 @@ The collection data source has two configurators, one for cells and one for supp
 }
 ```
 
-The cell configurator is just like the table view cell configurator.  The `cellReuseIdentifierForObject` method can return a hardcoded identifier or different values if the collection has multiple prototype cells.  The `configureCell` method gives you the opportunity to set properties on the cell for its object.
+The cell configurator is just like the table view cell configurator.  The `cellReuseIdentifierForManagedObject` method can return a hardcoded identifier or different values if the collection has multiple prototype cells.  The `configureCell` method gives you the opportunity to set properties on the cell for its object.
 
 The supplementary view configurator also works the same way, `configureView` is provided a dequeued view based on the reuse identifier returned by `reuseIdentifierForSupplementaryViewOfKind`.
 

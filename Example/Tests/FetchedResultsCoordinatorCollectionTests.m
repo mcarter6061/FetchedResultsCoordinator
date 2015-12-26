@@ -200,13 +200,13 @@ describe(@"FetchedResultsCoordinatorCollectionTests", ^{
                 
                 [coordinator controller:mockFRC didChangeObject:mockObject atIndexPath:indexPathZero forChangeType:NSFetchedResultsChangeUpdate newIndexPath:nil];
                 [coordinator controllerDidChangeContent:mockFRC];
-                OCMVerify([mockCollectionCellConfigurator configureCell:mockCell withObject:mockObject]);
+                OCMVerify([mockCollectionCellConfigurator configureCell:mockCell withManagedObject:mockObject]);
             });
             
             it(@"does not update not visible cells", ^{
                 OCMStub([mockCollectionView cellForItemAtIndexPath:indexPathZero]); // returns nil
                 
-                [[mockCollectionCellConfigurator reject] configureCell:OCMOCK_ANY withObject:mockObject];
+                [[mockCollectionCellConfigurator reject] configureCell:OCMOCK_ANY withManagedObject:mockObject];
                 
                 [coordinator controller:mockFRC didChangeObject:mockObject atIndexPath:indexPathZero forChangeType:NSFetchedResultsChangeUpdate newIndexPath:nil];
                 [coordinator controllerDidChangeContent:mockFRC];
