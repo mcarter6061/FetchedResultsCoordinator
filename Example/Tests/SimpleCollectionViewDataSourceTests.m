@@ -65,7 +65,7 @@ describe(@"SimpleCollectionDataSourceTests", ^{
         OCMStub([mockFRC objectAtIndexPath:indexPath]).andReturn(mockObject);
 
         OCMExpect([mockCellConfigurator cellReuseIdentifierForObject:OCMOCK_ANY]).andReturn(reuseIdentifier);
-        OCMExpect([mockCellConfigurator configureCell:mockCell withObject:mockObject]);
+        OCMExpect([mockCellConfigurator configureCell:mockCell withManagedObject:mockObject]);
         [dataSource collectionView:mockCollectionView cellForItemAtIndexPath:indexPath];
         OCMVerifyAll(mockCellConfigurator);
     });

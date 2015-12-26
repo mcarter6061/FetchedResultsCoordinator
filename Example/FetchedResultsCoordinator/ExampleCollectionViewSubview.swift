@@ -43,10 +43,10 @@ class ExampleCollectionViewSubviewController: UIViewController, CollectionCellCo
 
     // MARK: - CollectionCellConfigurator methods
 
-    func configureCell(cell: UICollectionViewCell, withObject: NSManagedObject) {
+    func configureCell(cell: UICollectionViewCell, withManagedObject: NSManagedObject) {
 
         if let cell = cell as? ExampleCollectionViewCell,
-            let withObject = withObject as? Item {
+            let withObject = withManagedObject as? Item {
                 cell.textLabel!.text = withObject.name
         }
     }

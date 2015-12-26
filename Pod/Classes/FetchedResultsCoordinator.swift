@@ -30,7 +30,7 @@ public class FetchedResultsCoordinator: NSObject,NSFetchedResultsControllerDeleg
         if let cellConfigurator = cellConfigurator {
             self.reconfigureVisibleCell = { (indexPath, object) in
                 if let cell = collectionView.cellForItemAtIndexPath(indexPath) {
-                    cellConfigurator.configureCell(cell, withObject: object)
+                    cellConfigurator.configureCell(cell, withManagedObject: object)
                 }
             }
         }

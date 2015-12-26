@@ -7,7 +7,7 @@ import UIKit
 
 @objc public protocol CollectionCellConfigurator {
     
-    func configureCell( cell: UICollectionViewCell, withObject: NSManagedObject )
+    func configureCell( cell: UICollectionViewCell, withManagedObject: NSManagedObject )
     func cellReuseIdentifierForObject( object: NSManagedObject ) -> String
 }
 
@@ -71,7 +71,7 @@ public class SimpleCollectionDataSource: NSObject, UICollectionViewDataSource {
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath)
         
-        cellConfigurator.configureCell(cell, withObject: object)
+        cellConfigurator.configureCell(cell, withManagedObject: object)
         
         return cell
     }
