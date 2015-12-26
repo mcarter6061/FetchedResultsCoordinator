@@ -37,7 +37,7 @@ When you are ready to load the data call `loadData` on the coordinator and it wi
 
 After calling `loadData` all changes observed by the FRC will be reflected in the table/collection view.
 
-### reloading vs reconfiguring cells
+### Reloading vs reconfiguring cells
 
 The initialisation parameter `cellConfigurator` is optional.  Providing one will let the coordinator call your cell configuration code again for an updated object rather than asking the table/collection view to reload that row/cell (which may cause an undesirable animation for that row/cell).  See the sections of this document for the `SimpleTableViewDataSource` and `SimpleCollectionDataSource` for more discussion of the cell configurator protocols.
 
