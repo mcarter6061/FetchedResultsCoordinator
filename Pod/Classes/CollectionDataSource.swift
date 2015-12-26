@@ -7,7 +7,7 @@ import UIKit
 
 @objc public protocol CollectionCellConfigurator {
     
-    func configureCell( cell: UICollectionViewCell, withManagedObject: NSManagedObject )
+    func configureCell( cell: UICollectionViewCell, withManagedObject managedObject: NSManagedObject )
     func cellReuseIdentifierForManagedObject( managedObject: NSManagedObject ) -> String
 }
 

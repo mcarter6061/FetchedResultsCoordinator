@@ -7,7 +7,7 @@ import UIKit
 
 @objc public protocol TableCellConfigurator {
    
-    func configureCell( cell: UITableViewCell, withManagedObject: NSManagedObject )
+    func configureCell( cell: UITableViewCell, withManagedObject managedObject: NSManagedObject )
     
     func cellReuseIdentifierForManagedObject( managedObject: NSManagedObject ) -> String
 }
