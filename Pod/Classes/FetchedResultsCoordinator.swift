@@ -46,7 +46,7 @@ public class FetchedResultsCoordinator: NSObject,NSFetchedResultsControllerDeleg
         if let cellConfigurator = cellConfigurator {
             self.reconfigureVisibleCell = {
                 if let cell = tableView.cellForRowAtIndexPath($0) {
-                    cellConfigurator.configureCell(cell, withObject:$1)
+                    cellConfigurator.configureCell(cell, withManagedObject:$1)
                 }
             }
         }
