@@ -23,36 +23,6 @@ struct ChangeSet {
     func indexPathInInsertedSection( indexPath: NSIndexPath ) -> Bool {
         return insertedSections.containsIndex(indexPath.section)
     }
-
-    func description() -> String {
-        
-        var result = "ChangeSet:\n"
-        if insertedSections.count > 0 {
-            result += "insertedSections \(insertedSections)\n"
-        }
-        
-        if deletedSections.count > 0 {
-            result += "deletedSections \(deletedSections)\n"
-        }
-        
-        if !insertedItems.isEmpty {
-            result += "insertedItems \(insertedItems)\n"
-        }
-        
-        if !deletedItems.isEmpty {
-            result += "deletedItems \(deletedItems)\n"
-        }
-        
-        if !updatedItems.isEmpty {
-            result += "updatedItems \(updatedItems)\n"
-        }
-        
-        if !movedItems.isEmpty {
-            result += "movedItems \(movedItems)\n"
-        }
-        
-        return result
-    }
 }
 
 protocol Coordinatable {
