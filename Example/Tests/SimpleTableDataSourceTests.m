@@ -3,8 +3,9 @@
 #import <Specta/Specta.h>
 #import <Expecta/Expecta.h>
 #import <OCMock/OCMock.h>
-#import "FetchedResultsCoordinator-swift.h"
 #import <CoreData/CoreData.h>
+
+#import "FetchedResultsCoordinator-swift.h"
 
 
 SpecBegin(SimpleTableDataSource)

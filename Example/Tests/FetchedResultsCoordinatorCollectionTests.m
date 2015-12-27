@@ -4,7 +4,6 @@
 #import <Expecta/Expecta.h>
 #import <OCMock/OCMock.h>
 #import <CoreData/CoreData.h>
-#import "Expecta+OCMock.h"
 
 #import "FetchedResultsCoordinator-swift.h"
 
