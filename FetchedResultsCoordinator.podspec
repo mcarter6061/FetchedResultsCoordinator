@@ -1,22 +1,16 @@
-#
-# Be sure to run `pod lib lint FetchedResultsCoordinator.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
   s.name             = "FetchedResultsCoordinator"
   s.version          = "0.1.0"
-  s.summary          = "A short description of FetchedResultsCoordinator."
+  s.summary          = "Wrapper around boilerplate code needed to hook up a
+  NSFetchedResultsController to UITableViews and UICollectionViews."
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!  
   s.description      = <<-DESC
+  Implements NSFetchedResultsControllerDelegate boilerplate code that
+  updates a table or collection view with managed object changes observed by
+  a NSFetchedResultsController.  Also provides simple data source
+  implementations for both table views (UITableViewDataSource) and
+  collection views (UICollectionViewDataSource) backed by a
+  NSFetchedResultsController.
                        DESC
 
   s.homepage         = "https://github.com/mcarter6061/FetchedResultsCoordinator"
@@ -25,13 +19,9 @@ Pod::Spec.new do |s|
   s.source           = { :git => "https://github.com/mcarter6061/FetchedResultsCoordinator.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/mjark'
 
-  s.platform     = :ios, '8.0'
+  s.platform     = :ios, '7.0'
   s.requires_arc = true
 
   s.source_files = 'Pod/Classes/**/*'
-#  s.resource_bundles = {
-#    'FetchedResultsCoordinator' => ['Pod/Assets/*.png']
-#  }
-
   s.frameworks = 'UIKit', 'CoreData'
 end
