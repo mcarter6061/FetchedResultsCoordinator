@@ -99,10 +99,14 @@ class DataViewController: UIViewController {
 extension DataViewController {
     
     override var keyCommands: [UIKeyCommand] {
-        return [UIKeyCommand(input: "1", modifierFlags: UIKeyModifierFlags(), action: "switchTab1", discoverabilityTitle: "Table VC"),
-            UIKeyCommand(input: "2", modifierFlags: UIKeyModifierFlags(), action: "switchTab2", discoverabilityTitle: "Table View"),
-            UIKeyCommand(input: "3", modifierFlags: UIKeyModifierFlags(), action: "switchTab3", discoverabilityTitle: "Collection VC"),
-            UIKeyCommand(input: "4", modifierFlags: UIKeyModifierFlags(), action: "switchTab4", discoverabilityTitle: "Collection View")]
+        if #available(iOS 9.0, *) {
+            return [UIKeyCommand(input: "1", modifierFlags: UIKeyModifierFlags(), action: "switchTab1", discoverabilityTitle: "Table VC"),
+                UIKeyCommand(input: "2", modifierFlags: UIKeyModifierFlags(), action: "switchTab2", discoverabilityTitle: "Table View"),
+                UIKeyCommand(input: "3", modifierFlags: UIKeyModifierFlags(), action: "switchTab3", discoverabilityTitle: "Collection VC"),
+                UIKeyCommand(input: "4", modifierFlags: UIKeyModifierFlags(), action: "switchTab4", discoverabilityTitle: "Collection View")]
+        } else {
+            return []
+        }
     }
     
     func switchTab1() {
