@@ -19,6 +19,7 @@ public class SimpleTableDataSource: NSObject, UITableViewDataSource {
     var configurator: TableCellConfigurator
     public var systemHeaders: Bool = false
     public var tableIndex: Bool = false
+    public var defaultSectionTitle: String?
     
     public init( cellConfigurator: TableCellConfigurator, fetchedResultsController: NSFetchedResultsController ) {
         self.configurator = cellConfigurator
@@ -60,6 +61,10 @@ public class SimpleTableDataSource: NSObject, UITableViewDataSource {
     }
     
     public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if fetchedResultsController.sectionNameKeyPath == nil &&
+           defaultSectionTitle != nil {
+                return defaultSectionTitle
+        }
         return systemHeaders ? self.fetchedResultsController.sections?[section].name : nil
     }
 
