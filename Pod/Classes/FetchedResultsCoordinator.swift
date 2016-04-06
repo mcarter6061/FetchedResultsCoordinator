@@ -4,7 +4,37 @@ import Foundation
 import CoreData
 import UIKit
 
-public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDelegate {
+// Can I create an objc coordinator that could be used by an objc class
+// needs a better name that sticking objc on the end!
+//@objc public class FetchedResultsCoordinatorProxy:  NSObject, NSFetchedResultsControllerDelegate {
+//    let coordinator: FetchedResultsCoordinator<NSManagedObject>
+//    
+//       @objc public init( collectionView: UICollectionView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: CollectionCellConfigurator? ) {
+//        self.coordinator = FetchedResultsCoordinator<NSManagedObject>(collectionView: collectionView, fetchedResultsController: fetchedResultsController, cellConfigurator: cellConfigurator)
+//    }
+//    
+//    public init<U:TableCellConfigurator where U.ManagedObjectType == NSManagedObject>( tableView: UITableView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: U? ) {
+//        self.coordinator = FetchedResultsCoordinator<NSManagedObject>(tableView: tableView, fetchedResultsController: fetchedResultsController, cellConfigurator: cellConfigurator)
+//    }
+//    
+//    public func controllerWillChangeContent(controller: NSFetchedResultsController) {
+//        coordinator.controllerWillChangeContent(controller)
+//    }
+//    
+//    public func controllerDidChangeContent(controller: NSFetchedResultsController) {
+//        coordinator.controllerDidChangeContent(controller)
+//    }
+//    
+//    public func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+//        coordinator.controller(controller, didChangeObject: anObject, atIndexPath: indexPath, forChangeType: type, newIndexPath: newIndexPath)
+//    }
+//    
+//    public func loadData() {
+//        coordinator.loadData()
+//    }
+//}
+//
+public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObject, NSFetchedResultsControllerDelegate {
     
     public var paused = false {
         didSet {
@@ -16,16 +46,15 @@ public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDele
         }
     }
     
-    var fetchedResultsController: NSFetchedResultsController
+    public private(set) var fetchedResultsController: NSFetchedResultsController
     var changes = ChangeSet()
-    var viewToSync: Coordinatable
+    var coordinatee: Coordinatable
     var reconfigureVisibleCell: ApplyUpdateChange?
-    
     
     public init( collectionView: UICollectionView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: CollectionCellConfigurator? ) {
         
         self.fetchedResultsController = fetchedResultsController
-        self.viewToSync = collectionView
+        self.coordinatee = collectionView
         
         if let cellConfigurator = cellConfigurator {
             self.reconfigureVisibleCell = { (indexPath, object) in
@@ -38,15 +67,16 @@ public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDele
         super.init()
     }
     
-    public init( tableView: UITableView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: TableCellConfigurator? ) {
+    public init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType>( tableView: UITableView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: U? ) {
         
         self.fetchedResultsController = fetchedResultsController
-        self.viewToSync = tableView
+        self.coordinatee = tableView
         
         if let cellConfigurator = cellConfigurator {
             self.reconfigureVisibleCell = {
                 if let cell = tableView.cellForRowAtIndexPath($0) {
-                    cellConfigurator.configureCell(cell, withManagedObject:$1)
+                    guard let object = $1 as? ManagedObjectType else { fatalError("Incorrect object type") }
+                    cellConfigurator.configureCell(cell, withManagedObject:object)
                 }
             }
         }
@@ -64,7 +94,15 @@ public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDele
         
         self.fetchedResultsController.delegate = paused ? nil : self
         
-        viewToSync.reloadData()
+        coordinatee.reloadData()
+    }
+    
+    public func objectAtIndexPath( indexPath: NSIndexPath ) -> ManagedObjectType {
+        guard let object = fetchedResultsController.objectAtIndexPath(indexPath) as? ManagedObjectType else {
+            fatalError("Wrong object type")
+        }
+        
+        return object
     }
     
     // MARK: - NSFetchedResultsControllerDelegate methods
@@ -73,7 +111,7 @@ public class FetchedResultsCoordinator: NSObject, NSFetchedResultsControllerDele
     }
     
     public func controllerDidChangeContent(controller: NSFetchedResultsController) {
-        viewToSync.apply(changes, applyUpdate:reconfigureVisibleCell)
+        coordinatee.apply(changes, applyUpdate:reconfigureVisibleCell)
         changes = ChangeSet()
     }
     

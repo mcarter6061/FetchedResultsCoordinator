@@ -7,8 +7,8 @@ import FetchedResultsCoordinator
 class TableSettingsViewController: UITableViewController {
 
     var fetchedResultsController: NSFetchedResultsController!
-    var tableDataSource: SimpleTableDataSource!
-    var coordinator: FetchedResultsCoordinator!
+    var tableDataSource: SimpleTableDataSource<Item>!
+    var coordinator: FetchedResultsCoordinator<Item>!
     
     @IBOutlet weak var showSystemHeadersSwitch: UISwitch!
     @IBOutlet weak var showTableIndexSwitch: UISwitch!

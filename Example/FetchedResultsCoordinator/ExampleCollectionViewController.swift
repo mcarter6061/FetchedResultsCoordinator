@@ -16,7 +16,7 @@ class ExampleCollectionViewHeader: UICollectionReusableView {
 class ExampleCollectionViewController: UICollectionViewController, CollectionCellConfigurator, CollectionViewSupplementaryViewConfigurator, ExampleViewControllersWithFetchedResultController {
  
     var fetchedResultsController: NSFetchedResultsController!
-    var frcCoordinator: FetchedResultsCoordinator?
+    var frcCoordinator: FetchedResultsCoordinator<Item>?
     var dataSource: SimpleCollectionDataSource?
     
     override func viewDidLoad() {

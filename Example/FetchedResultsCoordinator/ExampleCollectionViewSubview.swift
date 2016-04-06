@@ -11,7 +11,7 @@ class ExampleCollectionViewSubviewController: UIViewController, CollectionCellCo
     @IBOutlet weak var collectionView: UICollectionView!
 
     var fetchedResultsController: NSFetchedResultsController!
-    var frcCoordinator: FetchedResultsCoordinator?
+    var frcCoordinator: FetchedResultsCoordinator<Item>?
     var dataSource: SimpleCollectionDataSource?
     
     override func viewDidLoad() {

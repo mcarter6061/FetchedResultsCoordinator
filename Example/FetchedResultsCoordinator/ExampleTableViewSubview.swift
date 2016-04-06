@@ -5,29 +5,22 @@ import CoreData
 import FetchedResultsCoordinator
 
 
-class ExampleTableViewSubviewController: UIViewController, TableCellConfigurator, ExampleViewControllersWithFetchedResultController {
-
+class ExampleTableViewSubviewController: UIViewController, ExampleViewControllersWithFetchedResultController {
+    
     @IBOutlet weak var tableView: UITableView!
     
     var fetchedResultsController: NSFetchedResultsController!
-    var frcCoordinator: FetchedResultsCoordinator?
-    var dataSource: SimpleTableDataSource?
+    lazy var dataSource:SimpleTableDataSource<Item> = SimpleTableDataSource(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
+    lazy var frcCoordinator: FetchedResultsCoordinator<Item> = FetchedResultsCoordinator( tableView: self.tableView!, fetchedResultsController: self.fetchedResultsController, cellConfigurator: self )
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        if dataSource == nil {
-            dataSource = SimpleTableDataSource(cellConfigurator: self, fetchedResultsController: fetchedResultsController)
-            dataSource?.systemHeaders = true
-
-            tableView.dataSource = dataSource
-        }
-
-        if frcCoordinator == nil {
-            frcCoordinator = FetchedResultsCoordinator( tableView: self.tableView!, fetchedResultsController: self.fetchedResultsController, cellConfigurator: self )
-            frcCoordinator?.loadData()
-        }
+        dataSource.systemHeaders = true
+        tableView.dataSource = dataSource
+        
+        frcCoordinator.loadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -35,17 +28,7 @@ class ExampleTableViewSubviewController: UIViewController, TableCellConfigurator
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: - TableCellConfigurator methods 
-    
-    func configureCell(cell: UITableViewCell, withManagedObject managedObject: NSManagedObject) {
-        guard let managedObject = managedObject as? Item else { return }
-        
-        cell.textLabel!.text = managedObject.name
-    }
-    
-    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String {
-        return "ETVSCCellReuseIdentifier"
-    }
+
     
     // MARK: - Navigation
 
@@ -56,9 +39,22 @@ class ExampleTableViewSubviewController: UIViewController, TableCellConfigurator
                 let destinationViewController = navController.topViewController as? TableSettingsViewController {
                     destinationViewController.fetchedResultsController = fetchedResultsController
                     destinationViewController.coordinator = frcCoordinator
-                    destinationViewController.tableDataSource = dataSource!
+                    destinationViewController.tableDataSource = dataSource
             }
         }
     }
+}
 
+extension ExampleTableViewSubviewController: TableCellConfigurator {
+    
+    typealias ManagedObjectType = Item
+    
+    func configureCell(cell: UITableViewCell, withManagedObject managedObject: Item) {
+        
+        cell.textLabel!.text = managedObject.name
+    }
+    
+    func cellReuseIdentifierForManagedObject(managedObject: Item) -> String {
+        return "ETVSCCellReuseIdentifier"
+    }
 }

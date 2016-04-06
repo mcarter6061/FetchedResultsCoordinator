@@ -20,15 +20,13 @@
 		B92C61311C0ACA2E00092588 /* Item+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92C612F1C0ACA2E00092588 /* Item+CoreDataProperties.swift */; };
 		B92C61321C0ACA2E00092588 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92C61301C0ACA2E00092588 /* Item.swift */; };
 		B92C61351C0B711200092588 /* DemoDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92C61341C0B711200092588 /* DemoDataManager.swift */; };
-		B98494FE1C0F3CAE007A3360 /* SimpleTableDataSourceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B98494FD1C0F3CAE007A3360 /* SimpleTableDataSourceTests.m */; };
-		B98494FF1C0F5D00007A3360 /* FetchedResultsCoordinatorTableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B9C888BB1BFF653300E7FE63 /* FetchedResultsCoordinatorTableTests.m */; };
+		B98AFBAA1CB3534600E532C1 /* FetchedResultsCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98AFBA81CB34FAA00E532C1 /* FetchedResultsCoordinatorTests.swift */; };
 		B99BB79D1BE95A890056B799 /* ExampleData.json in Resources */ = {isa = PBXBuildFile; fileRef = B99BB79C1BE95A890056B799 /* ExampleData.json */; };
 		B99BB79F1BE95AA50056B799 /* Example.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = B99BB79E1BE95AA50056B799 /* Example.xcdatamodel */; };
 		B99BB7A51BEA8B030056B799 /* ExampleCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99BB7A41BEA8B030056B799 /* ExampleCollectionViewController.swift */; };
 		B99BB7A71BEB86DF0056B799 /* ExampleTableViewSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99BB7A61BEB86DF0056B799 /* ExampleTableViewSubview.swift */; };
 		B99BB7A91BEB86F00056B799 /* ExampleCollectionViewSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99BB7A81BEB86F00056B799 /* ExampleCollectionViewSubview.swift */; };
 		B9AFF5D61C161C7B007C67EB /* SimpleCollectionViewDataSourceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B92C61291C08CC2B00092588 /* SimpleCollectionViewDataSourceTests.m */; };
-		B9AFF5D81C17AF51007C67EB /* FetchedResultsCoordinatorCollectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B9AFF5D71C17AF51007C67EB /* FetchedResultsCoordinatorCollectionTests.m */; };
 		CD7934781E78340A84B341B3 /* Pods_FetchedResultsCoordinator_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA75B7C7FBD679B2E67A55A /* Pods_FetchedResultsCoordinator_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +67,7 @@
 		B92C61301C0ACA2E00092588 /* Item.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Item.swift; path = Models/Item.swift; sourceTree = "<group>"; };
 		B92C61341C0B711200092588 /* DemoDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoDataManager.swift; sourceTree = "<group>"; };
 		B98494FD1C0F3CAE007A3360 /* SimpleTableDataSourceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleTableDataSourceTests.m; sourceTree = "<group>"; };
+		B98AFBA81CB34FAA00E532C1 /* FetchedResultsCoordinatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsCoordinatorTests.swift; sourceTree = "<group>"; };
 		B99BB79C1BE95A890056B799 /* ExampleData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ExampleData.json; sourceTree = "<group>"; };
 		B99BB79E1BE95AA50056B799 /* Example.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Example.xcdatamodel; sourceTree = "<group>"; };
 		B99BB7A01BE95E8A0056B799 /* FetchedResultsDataSource.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FetchedResultsDataSource.framework; path = "Pods/../build/Debug-iphoneos/FetchedResultsDataSource.framework"; sourceTree = "<group>"; };
@@ -163,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				B9C888BB1BFF653300E7FE63 /* FetchedResultsCoordinatorTableTests.m */,
+				B98AFBA81CB34FAA00E532C1 /* FetchedResultsCoordinatorTests.swift */,
 				B9AFF5D71C17AF51007C67EB /* FetchedResultsCoordinatorCollectionTests.m */,
 				B98494FD1C0F3CAE007A3360 /* SimpleTableDataSourceTests.m */,
 				B92C61291C08CC2B00092588 /* SimpleCollectionViewDataSourceTests.m */,
@@ -446,10 +446,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B98AFBAA1CB3534600E532C1 /* FetchedResultsCoordinatorTests.swift in Sources */,
 				B91EF9E81BF2559600EFBE64 /* ManagedObjectContextFactory.swift in Sources */,
-				B98494FE1C0F3CAE007A3360 /* SimpleTableDataSourceTests.m in Sources */,
-				B9AFF5D81C17AF51007C67EB /* FetchedResultsCoordinatorCollectionTests.m in Sources */,
-				B98494FF1C0F5D00007A3360 /* FetchedResultsCoordinatorTableTests.m in Sources */,
 				B9AFF5D61C161C7B007C67EB /* SimpleCollectionViewDataSourceTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -571,6 +569,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
@@ -594,6 +593,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",

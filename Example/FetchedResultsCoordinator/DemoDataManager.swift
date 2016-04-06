@@ -21,7 +21,7 @@ class DemoDataManager {
         
         createItems( numberOfItems, numberOfSections: numberOfSections )
         
-        timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: "modifyData", userInfo: nil, repeats: true)
+        timer = NSTimer.scheduledTimerWithTimeInterval(1.0, target: self, selector: #selector(DemoDataManager.modifyData), userInfo: nil, repeats: true)
     }
     
     func createItems( numberOfItems: Int, numberOfSections: Int ) {
@@ -48,7 +48,7 @@ class DemoDataManager {
             
             let objects = try! self.backgroundContext.executeFetchRequest(fetchRequest) as! [Item]
             
-            for (var i = 0; i < numberOfChanges; i++ ) {
+            for _ in 0..<numberOfChanges {
                 
                 if let object = objects.randomItem() {
                     

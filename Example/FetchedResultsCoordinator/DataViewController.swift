@@ -100,10 +100,10 @@ extension DataViewController {
     
     override var keyCommands: [UIKeyCommand] {
         if #available(iOS 9.0, *) {
-            return [UIKeyCommand(input: "1", modifierFlags: UIKeyModifierFlags(), action: "switchTab1", discoverabilityTitle: "Table VC"),
-                UIKeyCommand(input: "2", modifierFlags: UIKeyModifierFlags(), action: "switchTab2", discoverabilityTitle: "Table View"),
-                UIKeyCommand(input: "3", modifierFlags: UIKeyModifierFlags(), action: "switchTab3", discoverabilityTitle: "Collection VC"),
-                UIKeyCommand(input: "4", modifierFlags: UIKeyModifierFlags(), action: "switchTab4", discoverabilityTitle: "Collection View")]
+            return [UIKeyCommand(input: "1", modifierFlags: UIKeyModifierFlags(), action: #selector(DataViewController.switchTab1), discoverabilityTitle: "Table VC"),
+                UIKeyCommand(input: "2", modifierFlags: UIKeyModifierFlags(), action: #selector(DataViewController.switchTab2), discoverabilityTitle: "Table View"),
+                UIKeyCommand(input: "3", modifierFlags: UIKeyModifierFlags(), action: #selector(DataViewController.switchTab3), discoverabilityTitle: "Collection VC"),
+                UIKeyCommand(input: "4", modifierFlags: UIKeyModifierFlags(), action: #selector(DataViewController.switchTab4), discoverabilityTitle: "Collection View")]
         } else {
             return []
         }

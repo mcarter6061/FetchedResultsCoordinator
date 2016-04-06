@@ -5,13 +5,12 @@ import CoreData
 import FetchedResultsCoordinator
 
 
-class ExampleTableViewController: UITableViewController, TableCellConfigurator, ExampleViewControllersWithFetchedResultController {
+class ExampleTableViewController: UITableViewController, ExampleViewControllersWithFetchedResultController {
 
     var fetchedResultsController: NSFetchedResultsController!
-    var frcCoordinator: FetchedResultsCoordinator?
-
-    var tableViewDataSource: SimpleTableDataSource?
-
+    var frcCoordinator: FetchedResultsCoordinator<Item>?
+    var tableViewDataSource: SimpleTableDataSource<Item>!
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -34,18 +33,6 @@ class ExampleTableViewController: UITableViewController, TableCellConfigurator, 
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: - TableCellConfigurator methods
-    
-    func configureCell(cell: UITableViewCell, withManagedObject managedObject: NSManagedObject) {
-        guard let managedObject = managedObject as? Item else { return }
-        
-        cell.textLabel!.text = managedObject.name
-    }
-    
-    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String {
-        return "ETVCCellReuseIdentifier"
-    }
-    
     // MARK: - Navigation
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -60,4 +47,18 @@ class ExampleTableViewController: UITableViewController, TableCellConfigurator, 
         }
     }
     
+}
+
+// MARK: - TableCellConfigurator methods
+
+extension ExampleTableViewController: TableCellConfigurator {
+    
+    func configureCell(cell: UITableViewCell, withManagedObject managedObject: Item) {
+        
+        cell.textLabel!.text = managedObject.name
+    }
+    
+    func cellReuseIdentifierForManagedObject(managedObject: Item) -> String {
+        return "ETVCCellReuseIdentifier"
+    }
 }

@@ -10,6 +10,11 @@
 
 SpecBegin(SimpleTableDataSource)
 
+
+struct TableCellConfiguratorSpy: TableCellConfigurator {
+    
+}
+
 describe(@"SimpleTableDataSource", ^{
 
     NSString *reuseIdentifier = @"reuseIdentifier";
