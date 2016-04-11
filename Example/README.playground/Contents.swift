@@ -19,7 +19,7 @@ class PlaygroundViewController: UITableViewController {
     
     var fetchedResultsController: NSFetchedResultsController!
     
-    lazy var coodinator: FetchedResultsCoordinator<Arrival> = FetchedResultsCoordinator(coordinatee: self, fetchedResultsController: self.fetchedResultsController, updateCell: self.makeUpdateVisibleCell(self.tableView))
+    lazy var coodinator: FetchedResultsCoordinator<Arrival> = FetchedResultsCoordinator(coordinatee: self.tableView, fetchedResultsController: self.fetchedResultsController, updateCell: self.makeUpdateVisibleCell(self.tableView))
     
     lazy var dataSource:SimpleTableDataSource<Arrival> = SimpleTableDataSource<Arrival>(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
     
