@@ -46,7 +46,6 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
         
         do {
             try fetchedResultsController.performFetch()
-            print( "Found Objects:\(self.fetchedResultsController.fetchedObjects)" )
         } catch {
             fatalError("performFetch failed:\(error).  Is your fetch request valid?")
         }
@@ -122,7 +121,7 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
 
 
 
-// This is a bridging class.  Because FetchedResultsCoordinator is a generic class it can't be used in Obj-c.  This wrapper class specializes it to use a NSManagedObject and provides a non-generic implementation.
+// This is an objc bridging wrapper.  Because FetchedResultsCoordinator is a generic class it can't be used in Obj-C.  This wrapper class specializes FetchedResultsCoordinator to use a NSManagedObject and provides a non-generic interface.
 @objc public class FetchedResultsCoordinatorObjC:  NSObject, NSFetchedResultsControllerDelegate {
     
     public typealias UpdateVisibleCell = ( index: NSIndexPath, object: NSManagedObject ) -> ()
