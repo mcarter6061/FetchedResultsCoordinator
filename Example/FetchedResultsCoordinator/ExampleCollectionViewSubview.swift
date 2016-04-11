@@ -24,7 +24,7 @@ class ExampleCollectionViewSubviewController: UIViewController, CollectionCellCo
         }
         
         if frcCoordinator == nil {
-            frcCoordinator = FetchedResultsCoordinator( collectionView: self.collectionView!, fetchedResultsController: self.fetchedResultsController, cellConfigurator: self )
+            frcCoordinator = FetchedResultsCoordinator( coordinatee: self.collectionView!, fetchedResultsController: self.fetchedResultsController, updateCell: makeUpdateVisibleCell(collectionView) )
             frcCoordinator?.loadData()
         }
     }

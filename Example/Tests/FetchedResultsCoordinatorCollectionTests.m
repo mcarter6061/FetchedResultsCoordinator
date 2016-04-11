@@ -18,7 +18,7 @@ describe(@"FetchedResultsCoordinatorCollectionTests", ^{
     
     id indexPathZero = [NSIndexPath indexPathForRow:0 inSection:0];
     id indexPathOne = [NSIndexPath indexPathForRow:1 inSection:0];
-    __block FetchedResultsCoordinator *coordinator;
+    __block FetchedResultsCoordinatorObjC *coordinator;
     
     beforeEach(^{
         mockCollectionView = OCMClassMock([UICollectionView class]);
@@ -29,14 +29,14 @@ describe(@"FetchedResultsCoordinatorCollectionTests", ^{
     });
     
     it(@"creates a FetchedResultsCoordinator for collections", ^{
-        expect([[FetchedResultsCoordinator alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC cellConfigurator:nil]).toNot.beNil();
+        expect([[FetchedResultsCoordinatorObjC alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC updateCell:nil]).toNot.beNil();
     });
     
     describe(@"with a collection view based Coordinator", ^{
         
         beforeEach(^{
-            coordinator = [[FetchedResultsCoordinator alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC cellConfigurator:nil];
-            OCMStub([mockCollectionView performBatchUpdates:[OCMArg invokeBlock] completion:nil]);
+            coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC updateCell:nil];
+            OCMStub([mockCollectionView performBatchUpdates:[OCMArg invokeBlock] completion:[OCMArg invokeBlock]]);
             [coordinator controllerWillChangeContent:mockFRC];
         });
         
@@ -187,28 +187,19 @@ describe(@"FetchedResultsCoordinatorCollectionTests", ^{
         
         describe(@"with a cellConfigurator", ^{
             
-            __block id mockCollectionCellConfigurator = OCMProtocolMock(@protocol(CollectionCellConfigurator));
-            
-            beforeEach(^{
-                coordinator = [[FetchedResultsCoordinator alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC cellConfigurator:mockCollectionCellConfigurator];
-            });
-            
             it(@"reconfigures cell when data updated", ^{
-                id mockCell = OCMClassMock([UITableViewCell class]);
-                OCMStub([mockCollectionView cellForItemAtIndexPath:indexPathZero]).andReturn(mockCell);
+                __block BOOL updateCellInvoked = NO;
+
+                coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC updateCell:^(NSIndexPath * _Nonnull indexPath, NSManagedObject * _Nonnull object) {
+                    updateCellInvoked = ( object == mockObject ) && ( indexPath == indexPathZero );
+                }];
+                
+                [[mockCollectionView reject] reloadItemsAtIndexPaths:@[indexPathZero]];
                 
                 [coordinator controller:mockFRC didChangeObject:mockObject atIndexPath:indexPathZero forChangeType:NSFetchedResultsChangeUpdate newIndexPath:nil];
                 [coordinator controllerDidChangeContent:mockFRC];
-                OCMVerify([mockCollectionCellConfigurator configureCell:mockCell withManagedObject:mockObject]);
-            });
-            
-            it(@"does not update not visible cells", ^{
-                OCMStub([mockCollectionView cellForItemAtIndexPath:indexPathZero]); // returns nil
-                
-                [[mockCollectionCellConfigurator reject] configureCell:OCMOCK_ANY withManagedObject:mockObject];
-                
-                [coordinator controller:mockFRC didChangeObject:mockObject atIndexPath:indexPathZero forChangeType:NSFetchedResultsChangeUpdate newIndexPath:nil];
-                [coordinator controllerDidChangeContent:mockFRC];
+                XCTAssertTrue( updateCellInvoked );
+                OCMVerifyAll(mockCollectionView);
             });
             
         });
@@ -216,7 +207,7 @@ describe(@"FetchedResultsCoordinatorCollectionTests", ^{
     });
     
     it(@"reloads data when unpaused", ^{
-        coordinator = [[FetchedResultsCoordinator alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC cellConfigurator:nil];
+        coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC updateCell:nil];
         
         coordinator.paused = YES;
         coordinator.paused = NO;
@@ -226,12 +217,12 @@ describe(@"FetchedResultsCoordinatorCollectionTests", ^{
     });
     
     it(@"starts observing changes when unpaused", ^{
-        coordinator = [[FetchedResultsCoordinator alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC cellConfigurator:nil];
+        coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithCollectionView:mockCollectionView fetchedResultsController:mockFRC updateCell:nil];
         
         coordinator.paused = YES;
         coordinator.paused = NO;
         
-        OCMVerify([mockFRC setDelegate:coordinator]);
+        OCMVerify([mockFRC setDelegate:OCMOCK_ANY]);
     });
 
 });

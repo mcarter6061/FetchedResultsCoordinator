@@ -24,12 +24,12 @@ class ExampleCollectionViewController: UICollectionViewController, CollectionCel
         super.viewDidLoad()
         
         if dataSource == nil {
-            dataSource = SimpleCollectionDataSource( fetchedResultsController: self.fetchedResultsController, cellConfigurator: self, supplementaryViewConfigurator: self )
+            dataSource = SimpleCollectionDataSource( fetchedResultsController: fetchedResultsController, cellConfigurator: self, supplementaryViewConfigurator: self )
             collectionView!.dataSource = dataSource
         }
         
         if frcCoordinator == nil {
-            frcCoordinator = FetchedResultsCoordinator( collectionView: self.collectionView!, fetchedResultsController: self.fetchedResultsController, cellConfigurator: self )
+            frcCoordinator = FetchedResultsCoordinator( coordinatee: collectionView!, fetchedResultsController: fetchedResultsController, updateCell: makeUpdateVisibleCell(collectionView!) )
             frcCoordinator?.loadData()
         }
     }

@@ -14,7 +14,6 @@ public protocol TableCellConfigurator {
     func cellReuseIdentifierForManagedObject( managedObject: ManagedObjectType ) -> String
 }
 
-
 public class SimpleTableDataSource<ManagedObjectType:NSManagedObject>: NSObject, UITableViewDataSource {
     
     var fetchedResultsController: NSFetchedResultsController
@@ -78,6 +77,26 @@ public class SimpleTableDataSource<ManagedObjectType:NSManagedObject>: NSObject,
 
     public func tableView(tableView: UITableView, sectionForSectionIndexTitle title: String, atIndex index: Int) -> Int {
         return fetchedResultsController.sectionForSectionIndexTitle(title, atIndex: index)
+    }
+
+    public func reconfigureCell( tableView: UITableView, indexPath: NSIndexPath, object: ManagedObjectType ) {
+        
+        guard let cell = tableView.cellForRowAtIndexPath(indexPath) else {return}
+        
+        configurator.configureCell(cell, withManagedObject: object)
+    }
+}
+
+extension TableCellConfigurator {
+    
+    // Helper method to create the UpdateCell function passed into a FetchedResultsCoordinator
+    // The function fetches the visible cell at indexPath and if it exists configures it again
+    // This is used to avoid the animation "flash" when you call tableView.reloadRowsAtIndexPaths
+    public func makeUpdateVisibleCell( tableView: UITableView ) -> ( NSIndexPath, ManagedObjectType ) -> Void {
+        return { indexPath, object in
+            guard let cell = tableView.cellForRowAtIndexPath( indexPath ) else { return }
+            self.configureCell(cell, withManagedObject: object )
+        }
     }
 
 }

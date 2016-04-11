@@ -22,7 +22,7 @@ class ExampleTableViewController: UITableViewController, ExampleViewControllersW
         tableView.dataSource = tableViewDataSource
         
         if frcCoordinator == nil {
-            frcCoordinator = FetchedResultsCoordinator( tableView: self.tableView!, fetchedResultsController: self.fetchedResultsController, cellConfigurator: self )
+            frcCoordinator = FetchedResultsCoordinator( coordinatee: self.tableView!, fetchedResultsController: self.fetchedResultsController, updateCell: self.makeUpdateVisibleCell(self.tableView) )
             frcCoordinator?.loadData()
         }
 

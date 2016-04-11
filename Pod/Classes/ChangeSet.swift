@@ -4,39 +4,41 @@ import Foundation
 import CoreData
 import UIKit
 
-typealias UpdateChange = (indexPath:NSIndexPath, object:NSManagedObject)
-typealias MoveChange = (fromIndexPath:NSIndexPath,toIndexPath:NSIndexPath)
-typealias ApplyUpdateChange = ( UpdateChange ) -> ()
+public typealias MoveIndexes = ( from: NSIndexPath, to: NSIndexPath )
 
-struct ChangeSet {
+public enum FetchedObjectChange {
+    case Insert( NSIndexPath )
+    case Delete( NSIndexPath )
+    case Move( MoveIndexes )
+    case Update( NSIndexPath )
+    // Special case, rather than use the table/collection view reload cell methods ( which can cause an anmiation flash ), if a method to configure the cell is provided, call this closure will call that method for the cell )
+    case CellConfigure( ()->() )
+    
+}
+
+public struct ChangeSet {
+    
     var insertedSections = NSMutableIndexSet()
     var deletedSections = NSMutableIndexSet()
-    var insertedItems: [NSIndexPath] = []
-    var deletedItems: [NSIndexPath] = []
-    var updatedItems: [UpdateChange] = []
-    var movedItems: [MoveChange] = []
+    var objectChanges: [FetchedObjectChange] = []
     
-    func indexPathInDeletedSection( indexPath: NSIndexPath ) -> Bool {
-        return deletedSections.containsIndex(indexPath.section)
+    func isInDeletedSection( indexPath: NSIndexPath? ) -> Bool? {
+        return indexPath.map{ deletedSections.containsIndex($0.section)}
     }
-
-    func indexPathInInsertedSection( indexPath: NSIndexPath ) -> Bool {
-        return insertedSections.containsIndex(indexPath.section)
+    
+    func isInInsertedSection( indexPath: NSIndexPath? ) -> Bool? {
+        return indexPath.map{insertedSections.containsIndex($0.section)}
     }
 }
 
-protocol Coordinatable {
-    
-    func reloadData()
-    
-    func apply( changeSet: ChangeSet, applyUpdate: ApplyUpdateChange? )
-}
 
 extension UITableView: Coordinatable {
     
-    func apply(changeSet: ChangeSet, applyUpdate: ApplyUpdateChange? ) {
-
+    public func apply(changeSet: ChangeSet ) {
+        
         self.beginUpdates()
+        
+        let ( deletedIndexes, insertedIndexes, updatedIndexes, movedIndexes ) = batchObjectChanges( changeSet.objectChanges )
         
         if changeSet.deletedSections.count > 0 {
             self.deleteSections(changeSet.deletedSections, withRowAnimation: .Fade)
@@ -46,36 +48,33 @@ extension UITableView: Coordinatable {
             self.insertSections(changeSet.insertedSections, withRowAnimation: .Fade)
         }
         
-        if !changeSet.deletedItems.isEmpty {
-            self.deleteRowsAtIndexPaths(changeSet.deletedItems, withRowAnimation: .Fade)
+        if !deletedIndexes.isEmpty {
+            self.deleteRowsAtIndexPaths(deletedIndexes, withRowAnimation: .Fade)
         }
         
-        if !changeSet.insertedItems.isEmpty {
-            self.insertRowsAtIndexPaths(changeSet.insertedItems, withRowAnimation: .Fade)
+        if !insertedIndexes.isEmpty {
+            self.insertRowsAtIndexPaths(insertedIndexes, withRowAnimation: .Fade)
         }
         
-        if !changeSet.movedItems.isEmpty {
-            self.deleteRowsAtIndexPaths(changeSet.movedItems.map{$0.fromIndexPath}, withRowAnimation: .Fade)
-            self.insertRowsAtIndexPaths(changeSet.movedItems.map{$0.toIndexPath}, withRowAnimation: .Fade)
+        if !movedIndexes.isEmpty {
+            self.deleteRowsAtIndexPaths(movedIndexes.map{$0.from}, withRowAnimation: .Fade)
+            self.insertRowsAtIndexPaths(movedIndexes.map{$0.to}, withRowAnimation: .Fade)
         }
         
-        if !changeSet.updatedItems.isEmpty {
-            if let applyUpdate = applyUpdate {
-                changeSet.updatedItems.forEach(applyUpdate)
-            } else {
-                self.reloadRowsAtIndexPaths(changeSet.updatedItems.map({$0.indexPath}), withRowAnimation: .None)
-            }
+        if !updatedIndexes.isEmpty {
+            self.reloadRowsAtIndexPaths(updatedIndexes, withRowAnimation: .None)
         }
         
         self.endUpdates()
+        
+        updateCells(changeSet)
     }
+    
 }
-
-
 
 extension UICollectionView: Coordinatable {
     
-    func apply(changeSet: ChangeSet, applyUpdate: ApplyUpdateChange? ) {
+    public func apply(changeSet: ChangeSet ) {
         
         self.performBatchUpdates({
             
@@ -87,27 +86,68 @@ extension UICollectionView: Coordinatable {
                 self.insertSections(changeSet.insertedSections)
             }
             
-            if !changeSet.deletedItems.isEmpty {
-                self.deleteItemsAtIndexPaths(changeSet.deletedItems)
+            let ( deletedIndexes, insertedIndexes, updatedIndexes, movedIndexes ) = batchObjectChanges( changeSet.objectChanges )
+            
+            if !deletedIndexes.isEmpty {
+                self.deleteItemsAtIndexPaths(deletedIndexes)
             }
             
-            if !changeSet.insertedItems.isEmpty {
-                self.insertItemsAtIndexPaths(changeSet.insertedItems)
+            if !insertedIndexes.isEmpty {
+                self.insertItemsAtIndexPaths(insertedIndexes)
             }
             
-            if !changeSet.movedItems.isEmpty {
-                self.deleteItemsAtIndexPaths(changeSet.movedItems.map{$0.fromIndexPath})
-                self.insertItemsAtIndexPaths(changeSet.movedItems.map{$0.toIndexPath})
+            if !movedIndexes.isEmpty {
+                self.deleteItemsAtIndexPaths(movedIndexes.map{$0.from})
+                self.insertItemsAtIndexPaths(movedIndexes.map{$0.to})
             }
             
-            if !changeSet.updatedItems.isEmpty {
-                if let applyUpdate = applyUpdate {
-                    changeSet.updatedItems.forEach(applyUpdate)
-                } else {
-                    self.reloadItemsAtIndexPaths(changeSet.updatedItems.map({$0.indexPath}))
-                }
+            if !updatedIndexes.isEmpty {
+                self.reloadItemsAtIndexPaths(updatedIndexes)
             }
-            
-            }, completion: nil)
+            }, completion: { _ in updateCells(changeSet) })
+    }
+}
+
+func updateCells( changeSet: ChangeSet ) {
+    
+    for case let .CellConfigure( updateCell ) in changeSet.objectChanges {
+        updateCell()
+    }
+}
+
+func batchObjectChanges( changes: [FetchedObjectChange] ) -> ( deletes:[NSIndexPath], inserts:[NSIndexPath], updates:[NSIndexPath], moves:[MoveIndexes] ) {
+    
+    var deletedIndexes: [NSIndexPath] = []
+    var insertedIndexes: [NSIndexPath] = []
+    var updatedIndexes: [NSIndexPath] = []
+    var movedIndexes: [MoveIndexes] = []
+    
+    for objectChange in changes {
+        switch objectChange {
+        case .Insert( let index ): insertedIndexes.append(index)
+        case .Delete( let index ): deletedIndexes.append(index)
+        case .Update( let index ): updatedIndexes.append(index)
+        case .Move( let move ): movedIndexes.append( move )
+        case .CellConfigure: break; // Will handle these refresh via configureCell in the coordinator
+        }
+    }
+    
+    return ( deletedIndexes, insertedIndexes, updatedIndexes, movedIndexes )
+}
+
+extension ChangeSet: CustomStringConvertible {
+    
+    public var description: String {
+        
+        let ( deletedIndexes, insertedIndexes, updatedIndexes, movedIndexes ) = batchObjectChanges( objectChanges )
+        
+        return "+Inserted Sections \(insertedSections.count)\n-Deleted Sections \(deletedSections.count)\n+Inserted Objects \(insertedIndexes.count)\n↺Updated Objects \(updatedIndexes.count)\n⇆Moved Objects \(movedIndexes.count)\n-Deleted Objects \(deletedIndexes.count) "
+    }
+}
+
+extension ChangeSet: CustomPlaygroundQuickLookable {
+    
+    public func customPlaygroundQuickLook() -> PlaygroundQuickLook {
+        return .Text( description )
     }
 }

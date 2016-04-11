@@ -10,33 +10,31 @@ class Item: NSManagedObject {
     var property: String?
 }
 
-class MockTableView: UITableView {
+class SpyFRC: NSFetchedResultsController {
     
-    var applyCalled: Bool = false
-    var reloadCalled: Bool = false
-    var changeSet: ChangeSet?
-    
-    override func reloadData() {
-      reloadCalled = true
+    var performFetchedCalled = false
+
+    override func performFetch() throws {
+        performFetchedCalled = true
     }
     
-//    func apply( changeSet: ChangeSet, applyUpdate: ApplyUpdateChange? ) {
-//        applyCalled = true
-//        self.changeSet = changeSet
-//    }
 }
 
-class MockConfigurator: TableCellConfigurator {
+class SpyCoordinatee: Coordinatable {
     
-    func configureCell( cell: UITableViewCell, withManagedObject managedObject: Item ) {
-        
+    var reloadDataCalled = false
+    var appliedChangeSet: ChangeSet?
+    
+    func reloadData() {
+        reloadDataCalled = true
     }
     
-    func cellReuseIdentifierForManagedObject( managedObject: Item ) -> String {
-        return "Dummy"
+    func apply( changeSet: ChangeSet ) {
+        appliedChangeSet = changeSet
     }
 
 }
+
 
 class FetchedResultsCoordinatorTests: QuickSpec {
     
@@ -44,27 +42,30 @@ class FetchedResultsCoordinatorTests: QuickSpec {
         
         describe("the 'Documentation' directory") {
             
-            let fetchedResultsController = NSFetchedResultsController()
-            let tableView = UITableView()
-            let mockConfigurator = MockConfigurator()
+            let indexPathZero = NSIndexPath( forRow:0, inSection:0 )
+            let indexPathOne = NSIndexPath( forRow:1, inSection:0 )
+            let mockObject = NSManagedObject()
+
+            let spyFRC = SpyFRC()
+            let spyCoordinatee = SpyCoordinatee()
+            var updateCellCalled = false
             
-            let sut = FetchedResultsCoordinator<Item>( tableView: tableView, fetchedResultsController: fetchedResultsController, cellConfigurator: mockConfigurator )
-//            let sut = FetchedResultsCoordinator<Item>( tableView: tableView, fetchedResultsController: fetchedResultsController, cellConfigurator: nil )
-//            public init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType>( tableView: UITableView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: U? ) {
+            let sut = FetchedResultsCoordinator<Item>( coordinatee: spyCoordinatee, fetchedResultsController: spyFRC, updateCell: { _ in updateCellCalled = true} )
 
             it("reloads data") {
                 sut.loadData()
-                
-//                expect(sut).to(contain("Organized Tests with Quick Examples and Example Groups"))
-//                expect(sections).to(contain("Installing Quick"))
+                expect(spyFRC.performFetchedCalled).to(beTrue())
+                expect(spyCoordinatee.reloadDataCalled).to(beTrue())
             }
             
-//            context("if it doesn't have what you're looking for") {
-//                it("needs to be updated") {
-//                    let you = You(awesome: true)
-//                    expect{you.submittedAnIssue}.toEventually(beTruthy())
-//                }
-//            }
+            it("applies updates to table when data inserted") {
+                sut.controller(spyFRC, didChangeObject: mockObject, atIndexPath: nil, forChangeType: .Insert, newIndexPath: indexPathZero)
+                sut.controllerDidChangeContent(spyFRC)
+                
+                expect(spyCoordinatee.appliedChangeSet!.objectChanges).to(contain(FetchedObjectChange.Insert(indexPathZero)))
+            }
+            
+            
         }
 
     }

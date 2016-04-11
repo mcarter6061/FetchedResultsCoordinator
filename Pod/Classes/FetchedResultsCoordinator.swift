@@ -4,38 +4,20 @@ import Foundation
 import CoreData
 import UIKit
 
-// Can I create an objc coordinator that could be used by an objc class
-// needs a better name that sticking objc on the end!
-//@objc public class FetchedResultsCoordinatorProxy:  NSObject, NSFetchedResultsControllerDelegate {
-//    let coordinator: FetchedResultsCoordinator<NSManagedObject>
-//    
-//       @objc public init( collectionView: UICollectionView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: CollectionCellConfigurator? ) {
-//        self.coordinator = FetchedResultsCoordinator<NSManagedObject>(collectionView: collectionView, fetchedResultsController: fetchedResultsController, cellConfigurator: cellConfigurator)
-//    }
-//    
-//    public init<U:TableCellConfigurator where U.ManagedObjectType == NSManagedObject>( tableView: UITableView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: U? ) {
-//        self.coordinator = FetchedResultsCoordinator<NSManagedObject>(tableView: tableView, fetchedResultsController: fetchedResultsController, cellConfigurator: cellConfigurator)
-//    }
-//    
-//    public func controllerWillChangeContent(controller: NSFetchedResultsController) {
-//        coordinator.controllerWillChangeContent(controller)
-//    }
-//    
-//    public func controllerDidChangeContent(controller: NSFetchedResultsController) {
-//        coordinator.controllerDidChangeContent(controller)
-//    }
-//    
-//    public func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
-//        coordinator.controller(controller, didChangeObject: anObject, atIndexPath: indexPath, forChangeType: type, newIndexPath: newIndexPath)
-//    }
-//    
-//    public func loadData() {
-//        coordinator.loadData()
-//    }
-//}
-//
+
+
+public protocol Coordinatable {
+    
+    func reloadData()
+    
+    func apply( changeSet: ChangeSet )
+}
+
+
 public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObject, NSFetchedResultsControllerDelegate {
     
+    public typealias UpdateVisibleCell = ( index: NSIndexPath, object: ManagedObjectType ) -> ()
+
     public var paused = false {
         didSet {
             self.fetchedResultsController.delegate = paused ? nil : self
@@ -47,47 +29,24 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
     }
     
     public private(set) var fetchedResultsController: NSFetchedResultsController
-    var changes = ChangeSet()
-    var coordinatee: Coordinatable
-    var reconfigureVisibleCell: ApplyUpdateChange?
+    private var changes = ChangeSet()
+    private var coordinatee: Coordinatable
+    private var updateVisibleCell: UpdateVisibleCell?
     
-    public init( collectionView: UICollectionView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: CollectionCellConfigurator? ) {
-        
+    public init( coordinatee: Coordinatable, fetchedResultsController: NSFetchedResultsController, updateCell: UpdateVisibleCell? ) {
         self.fetchedResultsController = fetchedResultsController
-        self.coordinatee = collectionView
-        
-        if let cellConfigurator = cellConfigurator {
-            self.reconfigureVisibleCell = { (indexPath, object) in
-                if let cell = collectionView.cellForItemAtIndexPath(indexPath) {
-                    cellConfigurator.configureCell(cell, withManagedObject: object)
-                }
-            }
-        }
+        self.coordinatee = coordinatee
+        self.updateVisibleCell = updateCell
         
         super.init()
     }
     
-    public init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType>( tableView: UITableView, fetchedResultsController: NSFetchedResultsController, cellConfigurator: U? ) {
-        
-        self.fetchedResultsController = fetchedResultsController
-        self.coordinatee = tableView
-        
-        if let cellConfigurator = cellConfigurator {
-            self.reconfigureVisibleCell = {
-                if let cell = tableView.cellForRowAtIndexPath($0) {
-                    guard let object = $1 as? ManagedObjectType else { fatalError("Incorrect object type") }
-                    cellConfigurator.configureCell(cell, withManagedObject:object)
-                }
-            }
-        }
-        
-        super.init()
-    }
-    
+   
     public func loadData() {
         
         do {
-            try self.fetchedResultsController.performFetch()
+            try fetchedResultsController.performFetch()
+            print( "Found Objects:\(self.fetchedResultsController.fetchedObjects)" )
         } catch {
             fatalError("performFetch failed:\(error).  Is your fetch request valid?")
         }
@@ -111,34 +70,35 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
     }
     
     public func controllerDidChangeContent(controller: NSFetchedResultsController) {
-        coordinatee.apply(changes, applyUpdate:reconfigureVisibleCell)
+        
+        print(changes)
+        coordinatee.apply(changes)
         changes = ChangeSet()
     }
     
     public func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
 
-        switch type {
-        case .Delete where !changes.indexPathInDeletedSection(indexPath!):
-            changes.deletedItems.append(indexPath!)
-        case .Insert where !changes.indexPathInInsertedSection(newIndexPath!):
-            changes.insertedItems.append(newIndexPath!)
-        case .Update:
-            changes.updatedItems.append( (indexPath!, anObject as! NSManagedObject) )
-        case .Move where !changes.indexPathInDeletedSection(indexPath!) && !changes.indexPathInInsertedSection(newIndexPath!):
-            changes.movedItems.append((fromIndexPath: indexPath!, toIndexPath: newIndexPath!))
-        case .Move where !changes.indexPathInInsertedSection(newIndexPath!):
-            changes.insertedItems.append(newIndexPath!)
-        case .Move where !changes.indexPathInDeletedSection(indexPath!):
-            changes.deletedItems.append(indexPath!)
-        default:
+        switch (type, changes.isInInsertedSection(newIndexPath), changes.isInDeletedSection(indexPath)) {
+        case (.Delete, _, false? ): changes.objectChanges.append(.Delete(indexPath!))
+        case (.Insert, false?, _ ): changes.objectChanges.append(.Insert(newIndexPath!))
+        case (.Move,false?,false?): changes.objectChanges.append( .Move( from: indexPath!, to: newIndexPath!))
+        case (.Move,false?,_):      changes.objectChanges.append( .Insert(newIndexPath!))
+        case (.Move,_,false?):      changes.objectChanges.append( .Delete(indexPath!))
+        case (.Update,_,false?):
+            if let updateVisibleCell = updateVisibleCell {
+                let updateCell = { updateVisibleCell( index: indexPath!, object: anObject as! ManagedObjectType) }
+                changes.objectChanges.append( .CellConfigure( updateCell ) )
+            } else {
+                changes.objectChanges.append( .Update( indexPath! ) )
+            }
+        default:break
             // .Delete ignores objects being deleted from a section that was deleted
             // .Insert ignores objects being inserted into a newly inserted section
             // .Update should never receive on in a deleted or inserted section
-            // .Move if moving from one section to another, sections may be inserted/deleted in which case we 
+            // .Move if moving from one section to another, sections may be inserted/deleted in which case we
             //       only need to account for the insertItem/deleteItem in the sections that weren't inserted/deleted
             
             // Docs state "The fetched results controller reports changes to its section before changes to the fetched result objects" so should be able to filter on the inserted/deleted sections
-            break
         }
     }
     
@@ -159,3 +119,47 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
     //optional public func controller(controller: NSFetchedResultsController, sectionIndexTitleForSectionName sectionName: String) -> String?
     
 }
+
+
+
+// This is a bridging class.  Because FetchedResultsCoordinator is a generic class it can't be used in Obj-c.  This wrapper class specializes it to use a NSManagedObject and provides a non-generic implementation.
+@objc public class FetchedResultsCoordinatorObjC:  NSObject, NSFetchedResultsControllerDelegate {
+    
+    public typealias UpdateVisibleCell = ( index: NSIndexPath, object: NSManagedObject ) -> ()
+
+    let coordinator: FetchedResultsCoordinator<NSManagedObject>
+    
+    public var paused: Bool {
+        get { return coordinator.paused }
+        set { coordinator.paused = newValue }
+    }
+    
+    @objc public init( collectionView: UICollectionView, fetchedResultsController: NSFetchedResultsController, updateCell: UpdateVisibleCell? ) {
+        self.coordinator = FetchedResultsCoordinator<NSManagedObject>(coordinatee: collectionView, fetchedResultsController: fetchedResultsController, updateCell: updateCell)
+    }
+    
+    @objc public init( tableView: UITableView, fetchedResultsController: NSFetchedResultsController, updateCell: UpdateVisibleCell? ) {
+        self.coordinator = FetchedResultsCoordinator<NSManagedObject>(coordinatee: tableView, fetchedResultsController: fetchedResultsController, updateCell: updateCell)
+    }
+    
+    public func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        coordinator.controllerWillChangeContent(controller)
+    }
+    
+    public func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        coordinator.controllerDidChangeContent(controller)
+    }
+    
+    public func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        coordinator.controller(controller, didChangeObject: anObject, atIndexPath: indexPath, forChangeType: type, newIndexPath: newIndexPath)
+    }
+    
+    public func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
+        coordinator.controller( controller, didChangeSection: sectionInfo, atIndex: sectionIndex, forChangeType:type)
+    }
+    
+    public func loadData() {
+        coordinator.loadData()
+    }
+}
+

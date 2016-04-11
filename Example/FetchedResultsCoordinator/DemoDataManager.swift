@@ -59,7 +59,7 @@ class DemoDataManager {
                     case .Insert:
                         object.hidden = false
                     case .Update:
-                        object.name = { object.name }()
+                        object.name = object.name.flatMap{ return $0.characters.last == "📝" ? String($0.characters.dropLast()) : $0 + "📝" }
                     case .Move:
                         if let swapPositionWithObject = objects.randomItem() {
                             swap(&object.ordinal, &swapPositionWithObject.ordinal)

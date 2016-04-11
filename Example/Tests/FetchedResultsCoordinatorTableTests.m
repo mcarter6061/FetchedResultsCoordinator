@@ -18,7 +18,7 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
     
     id indexPathZero = [NSIndexPath indexPathForRow:0 inSection:0];
     id indexPathOne = [NSIndexPath indexPathForRow:1 inSection:0];
-    __block FetchedResultsCoordinator *coordinator;
+    __block FetchedResultsCoordinatorObjC *coordinator;
     
     beforeEach(^{
         mockTableView = OCMClassMock([UITableView class]);
@@ -29,13 +29,13 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
     });
     
     it(@"creates a FetchedResultsCoordinator for tables", ^{
-        expect([[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC cellConfigurator:nil]).toNot.beNil();
+        expect([[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil]).toNot.beNil();
     });
     
     describe(@"with a tableView based Coordinator", ^{
         
         beforeEach(^{
-            coordinator = [[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC cellConfigurator:nil];
+            coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil];
             OCMExpect([mockTableView beginUpdates]);
             OCMExpect([mockTableView endUpdates]);
             [coordinator controllerWillChangeContent:mockFRC];
@@ -189,36 +189,28 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
         
         describe(@"with a cellConfigurator", ^{
             
-            __block id mockTableCellConfigurator = OCMProtocolMock(@protocol(TableCellConfigurator));
-            
-            beforeEach(^{
-                coordinator = [[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC cellConfigurator:mockTableCellConfigurator];
-            });
-            
+            __block BOOL updateCellInvoked = false;
+            __block id mockUpdateCell = ^(NSIndexPath * _Nonnull indexPath, NSManagedObject * _Nonnull object) {
+                updateCellInvoked = ( object == mockObject ) && ( indexPath == indexPathZero );
+            };
+
             it(@"reconfigures cell when data updated", ^{
-                id mockCell = OCMClassMock([UITableViewCell class]);
-                OCMStub([mockTableView cellForRowAtIndexPath:indexPathZero]).andReturn(mockCell);
+                coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:mockUpdateCell];
+                
+                [[mockTableView reject] reloadRowsAtIndexPaths:@[indexPathZero] withRowAnimation:UITableViewRowAnimationNone];
                 
                 [coordinator controller:mockFRC didChangeObject:mockObject atIndexPath:indexPathZero forChangeType:NSFetchedResultsChangeUpdate newIndexPath:nil];
                 [coordinator controllerDidChangeContent:mockFRC];
-                OCMVerify([mockTableCellConfigurator configureCell:mockCell withManagedObject:mockObject]);
+                XCTAssertTrue( updateCellInvoked );
+                OCMVerifyAll(mockTableView);
             });
-            
-            it(@"does not update not visible cells", ^{
-                OCMStub([mockTableView cellForRowAtIndexPath:indexPathZero]); // returns nil
-                
-                [[mockTableCellConfigurator reject] configureCell:OCMOCK_ANY withManagedObject:mockObject];
-                
-                [coordinator controller:mockFRC didChangeObject:mockObject atIndexPath:indexPathZero forChangeType:NSFetchedResultsChangeUpdate newIndexPath:nil];
-                [coordinator controllerDidChangeContent:mockFRC];
-            });
-            
+
         });
         
     });
     
     it(@"reloads data when unpaused", ^{
-        coordinator = [[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC cellConfigurator:nil];
+        coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil];
         
         coordinator.paused = YES;
         coordinator.paused = NO;
@@ -228,12 +220,12 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
     });
     
     it(@"starts observing changes when unpaused", ^{
-        coordinator = [[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC cellConfigurator:nil];
+        coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil];
         
         coordinator.paused = YES;
         coordinator.paused = NO;
         
-        OCMVerify([mockFRC setDelegate:coordinator]);
+        OCMVerify([mockFRC setDelegate:OCMOCK_ANY]);
     });
 
 });

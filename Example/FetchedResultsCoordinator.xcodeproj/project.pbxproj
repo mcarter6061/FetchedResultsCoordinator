@@ -20,7 +20,9 @@
 		B92C61311C0ACA2E00092588 /* Item+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92C612F1C0ACA2E00092588 /* Item+CoreDataProperties.swift */; };
 		B92C61321C0ACA2E00092588 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92C61301C0ACA2E00092588 /* Item.swift */; };
 		B92C61351C0B711200092588 /* DemoDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92C61341C0B711200092588 /* DemoDataManager.swift */; };
-		B98AFBAA1CB3534600E532C1 /* FetchedResultsCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98AFBA81CB34FAA00E532C1 /* FetchedResultsCoordinatorTests.swift */; };
+		B9463F9F1CB7249100C7E28B /* FetchedResultsCoordinatorCollectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B9AFF5D71C17AF51007C67EB /* FetchedResultsCoordinatorCollectionTests.m */; };
+		B9463FA41CB7E9A100C7E28B /* CollectionViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9463FA31CB7E9A100C7E28B /* CollectionViewTests.swift */; };
+		B963C4181CBC1D180091AC0D /* FetchedResultsCoordinatorTableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B9C888BB1BFF653300E7FE63 /* FetchedResultsCoordinatorTableTests.m */; };
 		B99BB79D1BE95A890056B799 /* ExampleData.json in Resources */ = {isa = PBXBuildFile; fileRef = B99BB79C1BE95A890056B799 /* ExampleData.json */; };
 		B99BB79F1BE95AA50056B799 /* Example.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = B99BB79E1BE95AA50056B799 /* Example.xcdatamodel */; };
 		B99BB7A51BEA8B030056B799 /* ExampleCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99BB7A41BEA8B030056B799 /* ExampleCollectionViewController.swift */; };
@@ -66,6 +68,9 @@
 		B92C612F1C0ACA2E00092588 /* Item+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Item+CoreDataProperties.swift"; path = "Models/Item+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		B92C61301C0ACA2E00092588 /* Item.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Item.swift; path = Models/Item.swift; sourceTree = "<group>"; };
 		B92C61341C0B711200092588 /* DemoDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoDataManager.swift; sourceTree = "<group>"; };
+		B9463FA11CB7E99600C7E28B /* TableViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewTests.swift; sourceTree = "<group>"; };
+		B9463FA31CB7E9A100C7E28B /* CollectionViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewTests.swift; sourceTree = "<group>"; };
+		B9463FA61CB7F5C400C7E28B /* README.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = README.playground; sourceTree = "<group>"; };
 		B98494FD1C0F3CAE007A3360 /* SimpleTableDataSourceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleTableDataSourceTests.m; sourceTree = "<group>"; };
 		B98AFBA81CB34FAA00E532C1 /* FetchedResultsCoordinatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsCoordinatorTests.swift; sourceTree = "<group>"; };
 		B99BB79C1BE95A890056B799 /* ExampleData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ExampleData.json; sourceTree = "<group>"; };
@@ -108,6 +113,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				B9463FA61CB7F5C400C7E28B /* README.playground */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for FetchedResultsCoordinator */,
 				607FACE81AFB9204008FA782 /* Tests */,
@@ -161,8 +167,10 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				B9C888BB1BFF653300E7FE63 /* FetchedResultsCoordinatorTableTests.m */,
 				B98AFBA81CB34FAA00E532C1 /* FetchedResultsCoordinatorTests.swift */,
+				B9463FA11CB7E99600C7E28B /* TableViewTests.swift */,
+				B9463FA31CB7E9A100C7E28B /* CollectionViewTests.swift */,
+				B9C888BB1BFF653300E7FE63 /* FetchedResultsCoordinatorTableTests.m */,
 				B9AFF5D71C17AF51007C67EB /* FetchedResultsCoordinatorCollectionTests.m */,
 				B98494FD1C0F3CAE007A3360 /* SimpleTableDataSourceTests.m */,
 				B92C61291C08CC2B00092588 /* SimpleCollectionViewDataSourceTests.m */,
@@ -276,7 +284,7 @@
 		607FACC81AFB9204008FA782 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0710;
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
@@ -446,9 +454,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B98AFBAA1CB3534600E532C1 /* FetchedResultsCoordinatorTests.swift in Sources */,
+				B9463F9F1CB7249100C7E28B /* FetchedResultsCoordinatorCollectionTests.m in Sources */,
 				B91EF9E81BF2559600EFBE64 /* ManagedObjectContextFactory.swift in Sources */,
 				B9AFF5D61C161C7B007C67EB /* SimpleCollectionViewDataSourceTests.m in Sources */,
+				B963C4181CBC1D180091AC0D /* FetchedResultsCoordinatorTableTests.m in Sources */,
+				B9463FA41CB7E9A100C7E28B /* CollectionViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

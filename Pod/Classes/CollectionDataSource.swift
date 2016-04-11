@@ -103,3 +103,17 @@ public class SimpleCollectionDataSource: NSObject, UICollectionViewDataSource {
     
 }
 
+extension CollectionCellConfigurator {
+    
+    // Helper method to create the UpdateCell function passed into a FetchedResultsCoordinator
+    // The function fetches the visible cell at indexPath and if it exists configures it again
+    // This is used to avoid the animation "flash" when you call tableView.reloadRowsAtIndexPaths
+    public func makeUpdateVisibleCell( collectionView: UICollectionView ) -> ( NSIndexPath, NSManagedObject ) -> Void {
+        return { indexPath, object in
+            guard let cell = collectionView.cellForItemAtIndexPath( indexPath ) else { return }
+            self.configureCell(cell, withManagedObject: object )
+        }
+    }
+
+}
+
