@@ -5,10 +5,12 @@ import CoreData
 import UIKit
 
 
-@objc public protocol CollectionCellConfigurator {
+public protocol CollectionCellConfigurator {
     
-    func configureCell( cell: UICollectionViewCell, withManagedObject managedObject: NSManagedObject )
-    func cellReuseIdentifierForManagedObject( managedObject: NSManagedObject ) -> String
+    associatedtype ManagedObjectType: NSManagedObject
+    
+    func configureCell( cell: UICollectionViewCell, withManagedObject managedObject: ManagedObjectType )
+    func cellReuseIdentifierForManagedObject( managedObject: ManagedObjectType ) -> String
 }
 
 @objc public protocol CollectionViewSupplementaryViewConfigurator {
@@ -19,17 +21,17 @@ import UIKit
 
 
 
-public class SimpleCollectionDataSource: NSObject, UICollectionViewDataSource {
+public class SimpleCollectionDataSource<ManagedObjectType:NSManagedObject>: NSObject, UICollectionViewDataSource {
     
     public var fetchedResultsController: NSFetchedResultsController
     
-    var cellConfigurator: CollectionCellConfigurator
-    var supplementaryViewConfigurator: CollectionViewSupplementaryViewConfigurator?
+    private var cellConfigurator: AnyCollectionCellConfigurator<ManagedObjectType>
+    internal var supplementaryViewConfigurator: CollectionViewSupplementaryViewConfigurator?
     
-    public init( fetchedResultsController: NSFetchedResultsController, cellConfigurator: CollectionCellConfigurator, supplementaryViewConfigurator: CollectionViewSupplementaryViewConfigurator? ) {
+    public init<U:CollectionCellConfigurator where U.ManagedObjectType == ManagedObjectType>( fetchedResultsController: NSFetchedResultsController, cellConfigurator: U, supplementaryViewConfigurator: CollectionViewSupplementaryViewConfigurator? ) {
         
         self.fetchedResultsController = fetchedResultsController
-        self.cellConfigurator = cellConfigurator
+        self.cellConfigurator = AnyCollectionCellConfigurator(cellConfigurator)
         self.supplementaryViewConfigurator = supplementaryViewConfigurator
     }
     
@@ -65,7 +67,9 @@ public class SimpleCollectionDataSource: NSObject, UICollectionViewDataSource {
     
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        let object = fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
+        guard let object = fetchedResultsController.objectAtIndexPath(indexPath) as? ManagedObjectType else {
+            fatalError("Incorrect object type")
+        }
         
         let reuseIdentifier = cellConfigurator.cellReuseIdentifierForManagedObject(object)
         
@@ -108,7 +112,7 @@ extension CollectionCellConfigurator {
     // Helper method to create the UpdateCell function passed into a FetchedResultsCoordinator
     // The function fetches the visible cell at indexPath and if it exists configures it again
     // This is used to avoid the animation "flash" when you call tableView.reloadRowsAtIndexPaths
-    public func makeUpdateVisibleCell( collectionView: UICollectionView ) -> ( NSIndexPath, NSManagedObject ) -> Void {
+    public func makeUpdateVisibleCell( collectionView: UICollectionView ) -> ( NSIndexPath, ManagedObjectType ) -> Void {
         return { indexPath, object in
             guard let cell = collectionView.cellForItemAtIndexPath( indexPath ) else { return }
             self.configureCell(cell, withManagedObject: object )
@@ -116,4 +120,26 @@ extension CollectionCellConfigurator {
     }
 
 }
+
+// Type erased wrapper for CollectionCellConfigurator protocol
+private class AnyCollectionCellConfigurator<ManagedObjectType:NSManagedObject>: CollectionCellConfigurator {
+    
+    let _configureCell: (cell:UICollectionViewCell,withManagedObject:ManagedObjectType)->()
+    let _cellReuseIdentifierForManagedObject: (managedObject: ManagedObjectType) -> String
+    
+    init<U:CollectionCellConfigurator where U.ManagedObjectType == ManagedObjectType>( _ configurator: U ) {
+        _cellReuseIdentifierForManagedObject = configurator.cellReuseIdentifierForManagedObject
+        _configureCell = configurator.configureCell
+    }
+    
+    func configureCell(cell: UICollectionViewCell, withManagedObject managedObject: ManagedObjectType) {
+        _configureCell(cell: cell, withManagedObject: managedObject)
+    }
+    
+    func cellReuseIdentifierForManagedObject(managedObject: ManagedObjectType) -> String {
+        return _cellReuseIdentifierForManagedObject(managedObject: managedObject)
+    }
+    
+}
+
 

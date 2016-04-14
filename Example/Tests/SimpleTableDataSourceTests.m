@@ -7,13 +7,12 @@
 
 #import "FetchedResultsCoordinator-swift.h"
 
-
 SpecBegin(SimpleTableDataSource)
 
 
-struct TableCellConfiguratorSpy: TableCellConfigurator {
-    
-}
+//struct TableCellConfiguratorSpy: TableCellConfigurator {
+//    
+//}
 
 describe(@"SimpleTableDataSource", ^{
 

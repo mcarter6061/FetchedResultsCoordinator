@@ -13,11 +13,11 @@ class ExampleCollectionViewHeader: UICollectionReusableView {
     @IBOutlet weak var textLabel: UILabel!
 }
 
-class ExampleCollectionViewController: UICollectionViewController, CollectionCellConfigurator, CollectionViewSupplementaryViewConfigurator, ExampleViewControllersWithFetchedResultController {
+class ExampleCollectionViewController: UICollectionViewController, ExampleViewControllersWithFetchedResultController {
  
     var fetchedResultsController: NSFetchedResultsController!
     var frcCoordinator: FetchedResultsCoordinator<Item>?
-    var dataSource: SimpleCollectionDataSource?
+    var dataSource: SimpleCollectionDataSource<Item>?
     
     override func viewDidLoad() {
         
@@ -45,22 +45,29 @@ class ExampleCollectionViewController: UICollectionViewController, CollectionCel
         frcCoordinator.paused = !frcCoordinator.paused
         sender.title = frcCoordinator.paused ? "Unpause" : "Pause"
     }
-    
-    // MARK: - CollectionCellConfigurator methods
+}
 
-    func configureCell(cell: UICollectionViewCell, withManagedObject managedObject: NSManagedObject) {
+
+// MARK: - CollectionCellConfigurator methods
+
+extension ExampleCollectionViewController: CollectionCellConfigurator {
+    
+    func configureCell(cell: UICollectionViewCell, withManagedObject managedObject: Item) {
         
         guard let cell = cell as? ExampleCollectionViewCell else { return }
-        guard let managedObject = managedObject as? Item else { return }
         
         cell.textLabel?.text = managedObject.name
     }
     
-    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String {
+    func cellReuseIdentifierForManagedObject(managedObject: Item) -> String {
         return "ECVCCellReuseIdentifier"
     }
+}
 
-    // MARK: - CollectionViewSupplementaryViewConfigurator methods
+
+// MARK: - CollectionViewSupplementaryViewConfigurator methods
+
+extension ExampleCollectionViewController: CollectionViewSupplementaryViewConfigurator {
     
     func reuseIdentifierForSupplementaryViewOfKind( kind: String, atIndexPath: NSIndexPath ) -> String {
         return "ECVCHeaderReuseIdentifier"

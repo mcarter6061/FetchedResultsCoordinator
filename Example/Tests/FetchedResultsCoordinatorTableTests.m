@@ -18,7 +18,7 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
     
     id indexPathZero = [NSIndexPath indexPathForRow:0 inSection:0];
     id indexPathOne = [NSIndexPath indexPathForRow:1 inSection:0];
-    __block FetchedResultsCoordinatorObjC *coordinator;
+    __block FetchedResultsCoordinator *coordinator;
     
     beforeEach(^{
         mockTableView = OCMClassMock([UITableView class]);
@@ -29,13 +29,13 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
     });
     
     it(@"creates a FetchedResultsCoordinator for tables", ^{
-        expect([[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil]).toNot.beNil();
+        expect([[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil]).toNot.beNil();
     });
     
     describe(@"with a tableView based Coordinator", ^{
         
         beforeEach(^{
-            coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil];
+            coordinator = [[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil];
             OCMExpect([mockTableView beginUpdates]);
             OCMExpect([mockTableView endUpdates]);
             [coordinator controllerWillChangeContent:mockFRC];
@@ -195,7 +195,7 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
             };
 
             it(@"reconfigures cell when data updated", ^{
-                coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:mockUpdateCell];
+                coordinator = [[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:mockUpdateCell];
                 
                 [[mockTableView reject] reloadRowsAtIndexPaths:@[indexPathZero] withRowAnimation:UITableViewRowAnimationNone];
                 
@@ -210,7 +210,7 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
     });
     
     it(@"reloads data when unpaused", ^{
-        coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil];
+        coordinator = [[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil];
         
         coordinator.paused = YES;
         coordinator.paused = NO;
@@ -220,7 +220,7 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
     });
     
     it(@"starts observing changes when unpaused", ^{
-        coordinator = [[FetchedResultsCoordinatorObjC alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil];
+        coordinator = [[FetchedResultsCoordinator alloc] initWithTableView:mockTableView fetchedResultsController:mockFRC updateCell:nil];
         
         coordinator.paused = YES;
         coordinator.paused = NO;

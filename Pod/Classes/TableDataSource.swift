@@ -7,7 +7,7 @@ import UIKit
 
 public protocol TableCellConfigurator {
     
-    typealias ManagedObjectType: NSManagedObject
+    associatedtype ManagedObjectType: NSManagedObject
    
     func configureCell( cell: UITableViewCell, withManagedObject managedObject: ManagedObjectType )
     
@@ -16,12 +16,13 @@ public protocol TableCellConfigurator {
 
 public class SimpleTableDataSource<ManagedObjectType:NSManagedObject>: NSObject, UITableViewDataSource {
     
-    var fetchedResultsController: NSFetchedResultsController
-    private var configurator: AnyTableCellConfigurator<ManagedObjectType>
+    public private(set) var fetchedResultsController: NSFetchedResultsController
     public var systemHeaders: Bool = false
     public var tableIndex: Bool = false
     public var defaultSectionTitle: String?
-    
+
+    private var configurator: AnyTableCellConfigurator<ManagedObjectType>
+
     public init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType>( cellConfigurator: U, fetchedResultsController: NSFetchedResultsController ) {
         self.configurator = AnyTableCellConfigurator<ManagedObjectType>(cellConfigurator)
         self.fetchedResultsController = fetchedResultsController
@@ -79,12 +80,6 @@ public class SimpleTableDataSource<ManagedObjectType:NSManagedObject>: NSObject,
         return fetchedResultsController.sectionForSectionIndexTitle(title, atIndex: index)
     }
 
-    public func reconfigureCell( tableView: UITableView, indexPath: NSIndexPath, object: ManagedObjectType ) {
-        
-        guard let cell = tableView.cellForRowAtIndexPath(indexPath) else {return}
-        
-        configurator.configureCell(cell, withManagedObject: object)
-    }
 }
 
 extension TableCellConfigurator {
@@ -101,6 +96,7 @@ extension TableCellConfigurator {
 
 }
 
+// Type erased wrapper for TableCellConfigurator protocol
 private struct AnyTableCellConfigurator<ManagedObjectType:NSManagedObject>: TableCellConfigurator {
     
     let _configureCell: (cell:UITableViewCell,withManagedObject:ManagedObjectType)->()
@@ -120,3 +116,4 @@ private struct AnyTableCellConfigurator<ManagedObjectType:NSManagedObject>: Tabl
     }
     
 }
+

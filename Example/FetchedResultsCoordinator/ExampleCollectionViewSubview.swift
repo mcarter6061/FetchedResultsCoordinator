@@ -6,13 +6,13 @@ import CoreData
 import FetchedResultsCoordinator
 
 
-class ExampleCollectionViewSubviewController: UIViewController, CollectionCellConfigurator, CollectionViewSupplementaryViewConfigurator, ExampleViewControllersWithFetchedResultController {
+class ExampleCollectionViewSubviewController: UIViewController, ExampleViewControllersWithFetchedResultController {
     
     @IBOutlet weak var collectionView: UICollectionView!
 
     var fetchedResultsController: NSFetchedResultsController!
     var frcCoordinator: FetchedResultsCoordinator<Item>?
-    var dataSource: SimpleCollectionDataSource?
+    var dataSource: SimpleCollectionDataSource<Item>?
     
     override func viewDidLoad() {
         
@@ -40,22 +40,30 @@ class ExampleCollectionViewSubviewController: UIViewController, CollectionCellCo
         frcCoordinator.paused = !frcCoordinator.paused
         sender.title = frcCoordinator.paused ? "Unpause" : "Pause"
     }
+}
 
-    // MARK: - CollectionCellConfigurator methods
 
-    func configureCell(cell: UICollectionViewCell, withManagedObject managedObject: NSManagedObject) {
+// MARK: - CollectionCellConfigurator methods
+
+extension ExampleCollectionViewSubviewController: CollectionCellConfigurator {
+
+    func configureCell(cell: UICollectionViewCell, withManagedObject managedObject: Item) {
 
         guard let cell = cell as? ExampleCollectionViewCell else { return }
-        guard let managedObject = managedObject as? Item else { return }
         
         cell.textLabel?.text = managedObject.name
     }
     
-    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String {
+    func cellReuseIdentifierForManagedObject(managedObject: Item) -> String {
         return "ECVSCCellReuseIdentifier"
     }
     
-    // MARK: - CollectionViewSupplementaryViewConfigurator methods
+}
+
+
+// MARK: - CollectionViewSupplementaryViewConfigurator methods
+
+extension ExampleCollectionViewSubviewController: CollectionViewSupplementaryViewConfigurator {
     
     func configureView( view: UICollectionReusableView, ofKind: String, atIndexPath: NSIndexPath ) {
         

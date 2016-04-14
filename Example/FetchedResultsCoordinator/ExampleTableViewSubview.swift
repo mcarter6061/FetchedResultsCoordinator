@@ -13,11 +13,6 @@ class ExampleTableViewSubviewController: UIViewController, ExampleViewController
     lazy var dataSource:SimpleTableDataSource<Item> = SimpleTableDataSource(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
     lazy var frcCoordinator: FetchedResultsCoordinator<Item> = FetchedResultsCoordinator( coordinatee: self.tableView!, fetchedResultsController: self.fetchedResultsController, updateCell: self.makeUpdateVisibleCell(self.tableView) )
     
-    func reconfigureCell( indexPath: NSIndexPath, object: Item ) {
-        guard let cell = tableView.cellForRowAtIndexPath( indexPath ) else { return }
-        configureCell(cell, withManagedObject: object )
-    }
-    
     override func viewDidLoad() {
         
         super.viewDidLoad()
