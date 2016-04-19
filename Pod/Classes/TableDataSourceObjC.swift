@@ -32,6 +32,10 @@ import UIKit
         self.dataSource = SimpleTableDataSource<NSManagedObject>(cellConfigurator: configurator, fetchedResultsController: fetchedResultsController)
     }
     
+    @objc public func sectionInfoForSection( sectionIndex: Int ) -> NSFetchedResultsSectionInfo? {
+        return dataSource.sectionInfoForSection(sectionIndex)
+    }
+
     @objc public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return dataSource.numberOfSectionsInTableView(tableView)
     }

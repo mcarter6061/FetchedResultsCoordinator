@@ -10,7 +10,9 @@ class ExampleTableViewSubviewController: UIViewController, ExampleViewController
     @IBOutlet weak var tableView: UITableView!
     
     var fetchedResultsController: NSFetchedResultsController!
+    
     lazy var dataSource:SimpleTableDataSource<Item> = SimpleTableDataSource(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
+    
     lazy var frcCoordinator: FetchedResultsCoordinator<Item> = FetchedResultsCoordinator( coordinatee: self.tableView!, fetchedResultsController: self.fetchedResultsController, updateCell: self.makeUpdateVisibleCell(self.tableView) )
     
     override func viewDidLoad() {

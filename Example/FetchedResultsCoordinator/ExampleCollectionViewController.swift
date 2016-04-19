@@ -29,7 +29,8 @@ class ExampleCollectionViewController: UICollectionViewController, ExampleViewCo
         }
         
         if frcCoordinator == nil {
-            frcCoordinator = FetchedResultsCoordinator( coordinatee: collectionView!, fetchedResultsController: fetchedResultsController, updateCell: makeUpdateVisibleCell(collectionView!) )
+            let updateCell = makeUpdateVisibleCell(collectionView!)
+            frcCoordinator = FetchedResultsCoordinator( coordinatee: collectionView!, fetchedResultsController: fetchedResultsController, updateCell: updateCell )
             frcCoordinator?.loadData()
         }
     }

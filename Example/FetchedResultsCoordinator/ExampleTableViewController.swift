@@ -9,7 +9,7 @@ class ExampleTableViewController: UITableViewController, ExampleViewControllersW
 
     var fetchedResultsController: NSFetchedResultsController!
     var frcCoordinator: FetchedResultsCoordinator<Item>?
-    var tableViewDataSource: SimpleTableDataSource<Item>!
+    var tableViewDataSource: SimpleTableDataSource<Item>?
     
     override func viewDidLoad() {
         
@@ -22,7 +22,7 @@ class ExampleTableViewController: UITableViewController, ExampleViewControllersW
         tableView.dataSource = tableViewDataSource
         
         if frcCoordinator == nil {
-            frcCoordinator = FetchedResultsCoordinator( coordinatee: self.tableView!, fetchedResultsController: self.fetchedResultsController, updateCell: self.makeUpdateVisibleCell(self.tableView) )
+            frcCoordinator = FetchedResultsCoordinator( coordinatee: tableView, fetchedResultsController: fetchedResultsController, updateCell: makeUpdateVisibleCell(tableView) )
             frcCoordinator?.loadData()
         }
 

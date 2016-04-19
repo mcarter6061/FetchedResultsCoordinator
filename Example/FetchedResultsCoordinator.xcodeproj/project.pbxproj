@@ -23,6 +23,7 @@
 		B92EC8661CBF3D4600A2E060 /* SimpleCollectionViewDataSourceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B92C61291C08CC2B00092588 /* SimpleCollectionViewDataSourceTests.m */; };
 		B9463F9F1CB7249100C7E28B /* FetchedResultsCoordinatorCollectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B9AFF5D71C17AF51007C67EB /* FetchedResultsCoordinatorCollectionTests.m */; };
 		B9463FA41CB7E9A100C7E28B /* CollectionViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9463FA31CB7E9A100C7E28B /* CollectionViewTests.swift */; };
+		B95FD9701CC6B8F700C395CF /* FetchedResultsCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98AFBA81CB34FAA00E532C1 /* FetchedResultsCoordinatorTests.swift */; };
 		B963C4181CBC1D180091AC0D /* FetchedResultsCoordinatorTableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B9C888BB1BFF653300E7FE63 /* FetchedResultsCoordinatorTableTests.m */; };
 		B976A3711CBC6C9F00714FFD /* TableViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9463FA11CB7E99600C7E28B /* TableViewTests.swift */; };
 		B99BB79D1BE95A890056B799 /* ExampleData.json in Resources */ = {isa = PBXBuildFile; fileRef = B99BB79C1BE95A890056B799 /* ExampleData.json */; };
@@ -459,6 +460,7 @@
 				B9463F9F1CB7249100C7E28B /* FetchedResultsCoordinatorCollectionTests.m in Sources */,
 				B91EF9E81BF2559600EFBE64 /* ManagedObjectContextFactory.swift in Sources */,
 				B9F7AAEA1CBE95380054ED24 /* SimpleTableDataSourceTests.m in Sources */,
+				B95FD9701CC6B8F700C395CF /* FetchedResultsCoordinatorTests.swift in Sources */,
 				B92EC8661CBF3D4600A2E060 /* SimpleCollectionViewDataSourceTests.m in Sources */,
 				B963C4181CBC1D180091AC0D /* FetchedResultsCoordinatorTableTests.m in Sources */,
 				B9463FA41CB7E9A100C7E28B /* CollectionViewTests.swift in Sources */,

@@ -28,6 +28,16 @@ public class SimpleTableDataSource<ManagedObjectType:NSManagedObject>: NSObject,
         self.fetchedResultsController = fetchedResultsController
         super.init()
     }
+    
+    public func sectionInfoForSection( sectionIndex: Int ) -> NSFetchedResultsSectionInfo? {
+        
+        if let sectionInfo = self.fetchedResultsController.sections?[sectionIndex] {
+            return sectionInfo
+        }
+        
+        return nil
+    }
+
 
     // MARK: - UITableViewDataSource methods
 

@@ -37,6 +37,11 @@ describe(@"SimpleCollectionDataSourceTests", ^{
         expect(dataSource).toNot.beNil;
     });
     
+    it(@"should return nil if there are no sections in the FRC yet", ^{
+        OCMStub([mockFRC sections]);
+        expect([dataSource sectionInfoForSection:4]).to.beNil;
+    });
+    
     it(@"has the correct number of sections", ^{
         id mockSection = [OCMockObject niceMockForProtocol:@protocol(NSFetchedResultsSectionInfo)];
         NSArray *sections = @[mockSection,mockSection];

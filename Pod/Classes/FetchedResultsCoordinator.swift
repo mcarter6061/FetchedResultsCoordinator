@@ -33,7 +33,7 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
     private var coordinatee: Coordinatable
     private var updateVisibleCell: UpdateVisibleCell?
     
-    public init( coordinatee: Coordinatable, fetchedResultsController: NSFetchedResultsController, updateCell: UpdateVisibleCell? ) {
+    public init( coordinatee: Coordinatable, fetchedResultsController: NSFetchedResultsController, updateCell: UpdateVisibleCell? = nil) {
         self.fetchedResultsController = fetchedResultsController
         self.coordinatee = coordinatee
         self.updateVisibleCell = updateCell
@@ -70,8 +70,8 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
     
     public func controllerDidChangeContent(controller: NSFetchedResultsController) {
         
-        print(changes)
         coordinatee.apply(changes)
+        
         changes = ChangeSet()
     }
     

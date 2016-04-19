@@ -1,9 +1,33 @@
-//: [Previous](@previous)
+/*:
+ # Tube Arrivals at Kings Cross station
+ 
+ This playground uses a `FetchedResultsCoordinator` to update a table view based on changing arrival times of London Underground trains to Kings Cross station.  
+ 
+ The data is represented by a Arrival model object:
+ 
+ ```
+ +----------------+
+ |Arrival         |
+ +----------------+
+ |id              |
+ |expectedArrival |
+ |lineName        |
+ |platformName    |
+ +----------------+
+ ```
+ 
+ The data is fetched from the TFL apis, though in this playground the network code is simulated, playing back previously fetched data stored in a file ( because the API requires a key ).
+ 
+ The `PlaygroundViewController`
+ */
 
 import XCPlayground
 import UIKit
 import CoreData
 import FetchedResultsCoordinator
+
+
+//: Create the Core Data stack.  Generally the model for the context will be created in the Core Data model editor.  In this playground it is created programatically in the playground support files, as currently playgrounds do not support .xcdatamodel files.
 
 let managedObjectContext = makeMainContext()
 
@@ -15,11 +39,20 @@ fetchRequest.sortDescriptors = [NSSortDescriptor( key:"expectedArrival", ascendi
 let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
 
 
+//: Configure some global colours for the tube line
+let colours = [ "Circle" : [#Color(colorLiteralRed: 0.9960784314, green: 0.7725490196, blue: 0.03529411765, alpha: 1)#], "Hammersmith & City" : [#Color(colorLiteralRed: 0.8039215686, green: 0.5176470587999999, blue: 0.6235294118, alpha: 1)#], "Northern" : [#Color(colorLiteralRed: 0, green: 0, blue: 0, alpha: 1)#], "Victoria" : [#Color(colorLiteralRed: 0.06666666667, green: 0.5568627451, blue: 0.8549019608, alpha: 1)#],  "Piccadilly" : [#Color(colorLiteralRed: 0.02745098039, green: 0, blue: 0.5921568627, alpha: 1)#], "Metropolitan" : [#Color(colorLiteralRed: 0.3764705882, green: 0, blue: 0.2666666667, alpha: 1)#]]
+
+private func colourForLine( name: String? ) -> UIColor {
+    return name.flatMap{colours[$0]} ?? [#Color(colorLiteralRed: 0.6000000237999999, green: 0.6000000237999999, blue: 0.6000000237999999, alpha: 1)#]
+}
+
+//: ## `PlaygroundViewController`
+
 class PlaygroundViewController: UITableViewController {
     
     var fetchedResultsController: NSFetchedResultsController!
     
-    lazy var coodinator: FetchedResultsCoordinator<Arrival> = FetchedResultsCoordinator(coordinatee: self.tableView, fetchedResultsController: self.fetchedResultsController, updateCell: self.makeUpdateVisibleCell(self.tableView))
+    lazy var coodinator: FetchedResultsCoordinator<Arrival> = FetchedResultsCoordinator(coordinatee: self.tableView, fetchedResultsController: self.fetchedResultsController)
     
     lazy var dataSource:SimpleTableDataSource<Arrival> = SimpleTableDataSource<Arrival>(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
     
@@ -36,7 +69,7 @@ class PlaygroundViewController: UITableViewController {
     
 }
 
-let colors = [ "Circle" : [#Color(colorLiteralRed: 0.9960784314, green: 0.7725490196, blue: 0.03529411765, alpha: 1)#], "Hammersmith & City" : [#Color(colorLiteralRed: 0.8039215686, green: 0.5176470587999999, blue: 0.6235294118, alpha: 1)#], "Northern" : [#Color(colorLiteralRed: 0, green: 0, blue: 0, alpha: 1)#], "Victoria" : [#Color(colorLiteralRed: 0.06666666667, green: 0.5568627451, blue: 0.8549019608, alpha: 1)#],  "Piccadilly" : [#Color(colorLiteralRed: 0.02745098039, green: 0, blue: 0.5921568627, alpha: 1)#], "Metropolitan" : [#Color(colorLiteralRed: 0.3764705882, green: 0, blue: 0.2666666667, alpha: 1)#]]
+//: The `TableCellConfigurator` implementation.  In our example we only have one kind of cell, so the `cellReuseIdentifierForManagedObject` method can just return a constant.
 
 extension PlaygroundViewController: TableCellConfigurator {
     
@@ -54,9 +87,9 @@ extension PlaygroundViewController: TableCellConfigurator {
         
         cell.detailTextLabel?.text = managedObject.platformName ?? "Unknown Platform"
         
-        let lineColor = managedObject.lineName.flatMap{colors[$0]} ?? [#Color(colorLiteralRed: 0.4588235294, green: 0.2352941176, blue: 0.1098039216, alpha: 1)#]
-        cell.backgroundColor = lineColor
+        cell.backgroundColor = colourForLine( managedObject.lineName )
     }
+    
 }
 
 let viewController = PlaygroundViewController()
@@ -66,3 +99,5 @@ viewController.view.frame = CGRectMake(0, 0, 320, 480)
 XCPlaygroundPage.currentPage.liveView = viewController.tableView
 
 fetchData( managedObjectContext: managedObjectContext )
+
+print( "Open the Timeline view in the Assistant Editor to see the live table view" )

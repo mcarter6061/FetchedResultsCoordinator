@@ -38,6 +38,11 @@ describe(@"SimpleTableDataSource", ^{
     it(@"should create a data source", ^{
         expect(dataSource).notTo.beNil();
     });
+    
+    it(@"should return nil if there are no sections in the FRC yet", ^{
+        OCMStub([mockFRC sections]);
+        expect([dataSource sectionInfoForSection:4]).to.beNil();
+    });
 
     it(@"should have the same number of sections as the FRC", ^{
         id mockSection = OCMProtocolMock(@protocol(NSFetchedResultsSectionInfo));

@@ -35,12 +35,25 @@ class SpyCoordinatee: Coordinatable {
 
 }
 
+extension FetchedObjectChange:Equatable {}
+
+public func ==(lhs: FetchedObjectChange, rhs: FetchedObjectChange) -> Bool {
+    switch (lhs,rhs) {
+    case let (.Insert(lhsIndexPath), .Insert(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
+    case let (.Delete(lhsIndexPath), .Delete(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
+    case let (.Move(lhsIndexPath), .Move(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
+    case let (.Update(lhsIndexPath), .Update(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
+    case (.CellConfigure, .CellConfigure):return true
+    default: return false
+    }
+}
+
 
 class FetchedResultsCoordinatorTests: QuickSpec {
     
     override func spec() {
         
-        describe("the 'Documentation' directory") {
+        describe("with a FetchedResultsCoordinator") {
             
             let indexPathZero = NSIndexPath( forRow:0, inSection:0 )
             let indexPathOne = NSIndexPath( forRow:1, inSection:0 )
@@ -62,9 +75,10 @@ class FetchedResultsCoordinatorTests: QuickSpec {
                 sut.controller(spyFRC, didChangeObject: mockObject, atIndexPath: nil, forChangeType: .Insert, newIndexPath: indexPathZero)
                 sut.controllerDidChangeContent(spyFRC)
                 
-                expect(spyCoordinatee.appliedChangeSet!.objectChanges).to(contain(FetchedObjectChange.Insert(indexPathZero)))
+                expect(spyCoordinatee.appliedChangeSet).toNot(beNil())
+                let expected:FetchedObjectChange = FetchedObjectChange.Insert(indexPathZero)
+                expect(spyCoordinatee.appliedChangeSet!.objectChanges).to(contain(expected))
             }
-            
             
         }
 
