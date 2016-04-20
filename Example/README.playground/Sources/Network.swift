@@ -1,45 +1,43 @@
 import Foundation
 import CoreData
-
-
-public func fetchData( managedObjectContext context: NSManagedObjectContext ) {
-    
-    managedObjectContext = context
-//    let url = NSBundle.mainBundle().URLForResource("sampleData", withExtension: "json")
-    let url = NSURL( string:"https://api.tfl.gov.uk/StopPoint/940GZZLUKSX/Arrivals?app_id=&app_key=" )
-
-    let sessionTask = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: responseHandler)
-    sessionTask.resume()
-    
-    let time = dispatch_time(DISPATCH_TIME_NOW, Int64(10 * NSEC_PER_SEC))
-    dispatch_after(time, dispatch_get_main_queue()) {
-        fetchData(managedObjectContext: managedObjectContext)
-    }
-}
+import XCPlayground
 
 var managedObjectContext: NSManagedObjectContext!
 
-func responseHandler(data:NSData?, response:NSURLResponse?,error:NSError?) {
-
-    guard error == nil,
-        let data = data  else {
-            print("Failed to fetch data")
-            return
-    }
+// Going to fetch data from disk rather than real API calls
+public func fetchArrivals(managedObjectContext context: NSManagedObjectContext, demoDataURL: NSURL ) {
     
-    do {
-        let podos = try parseData( data )
-        
-        managedObjectContext.performBlock {
-            updateContext( podos )
-            print( "Managed Object Context inserts \(managedObjectContext.insertedObjects.count) updates \(managedObjectContext.updatedObjects.count) deletes \(managedObjectContext.deletedObjects.count)")
-            try! managedObjectContext.save()
+    managedObjectContext = context
+    
+    guard let data = NSData(contentsOfURL: demoDataURL),
+        let jsonResponses = (try! NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)) as? NSArray
+        else { fatalError("Failed to load demo data") }
+
+    // Start replay, will simulate fetch every 5 seconds until data is exhausted
+    replayResponse(0,responses: jsonResponses)
+}
+
+func replayResponse( index: Int, responses: NSArray ) {
+
+    guard let nextArrivals = responses[index] as? NSArray else { fatalError("Replay of response failed") }
+    
+    let podos = parseArrivals( nextArrivals )
+
+    managedObjectContext.performBlock {
+        updateContext( podos )
+        print( "Managed Object Context inserts \(managedObjectContext.insertedObjects.count) updates \(managedObjectContext.updatedObjects.count) deletes \(managedObjectContext.deletedObjects.count)")
+        try! managedObjectContext.save()
+    }
+
+    if index + 1 < responses.count {
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(5 * NSEC_PER_SEC))
+        dispatch_after(time, dispatch_get_main_queue()) {
+            replayResponse( index + 1, responses: responses)
         }
-
-    } catch {
-        print( "Error fetching data \(error)" )
+    } else {
+        print("Demo Finished, execute playground again to replay the 'live' data")
+        XCPlaygroundPage.currentPage.finishExecution()
     }
-    
 }
 
 
@@ -47,33 +45,20 @@ struct ArrivalPODO {
     var id: String
     var lineName: String
     var platformName: String
-    var expectedArrival: NSDate
+    var timeToStation: Int
 }
 
-var dateFormatter: NSDateFormatter = {
-    let formatter = NSDateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-    return formatter
-}()
-
-func parseData( data: NSData ) throws -> [ArrivalPODO] {
-    
-    var jsonArray: NSArray?
-    
-    jsonArray = (try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)) as? NSArray
-
-    guard let jsonArrayValue = jsonArray else { return[] }
+func parseArrivals( jsonArray: NSArray ) -> [ArrivalPODO] {
     
     var podos: [ArrivalPODO] = []
     
-    for arrivalDict in jsonArrayValue {
+    for arrivalDict in jsonArray {
         guard let id = arrivalDict["id"] as? String,
             let lineName = arrivalDict["lineName"] as? String,
             let platformName = arrivalDict["platformName"] as? String,
-            let dateString = arrivalDict["expectedArrival"] as? String,
-            let expectedArrival = dateFormatter.dateFromString( dateString ) else { continue }
+            let timeToStation = arrivalDict["timeToStation"] as? Int else { continue }
         
-        let podo = ArrivalPODO( id: id, lineName: lineName, platformName: platformName, expectedArrival: expectedArrival )
+        let podo = ArrivalPODO( id: id, lineName: lineName, platformName: platformName, timeToStation: timeToStation )
         podos.append( podo )
     }
     return podos
@@ -96,7 +81,7 @@ func updateContext( podos: [ArrivalPODO] ) {
         arrival.id = podo.id
         arrival.lineName = podo.lineName
         arrival.platformName = podo.platformName
-        arrival.expectedArrival = podo.expectedArrival
+        arrival.timeToStation = podo.timeToStation
         updatedArrivals.insert(arrival)
     }
     

@@ -8,7 +8,7 @@ public class Arrival: NSManagedObject {
     @NSManaged public var id: String?
     @NSManaged public var lineName: String?
     @NSManaged public var platformName: String?
-    @NSManaged public var expectedArrival: NSDate?
+    @NSManaged public var timeToStation: NSNumber?
 }
 
 
@@ -59,14 +59,14 @@ func makeModel() -> NSManagedObjectModel {
     platformNameAttribute.optional = false
     platformNameAttribute.indexed = false
     
-    let expectedArrivalAttribute = NSAttributeDescription()
-    expectedArrivalAttribute.name = "expectedArrival"
-    expectedArrivalAttribute.attributeType = NSAttributeType.DateAttributeType
-    expectedArrivalAttribute.optional = false
-    expectedArrivalAttribute.indexed = false
+    let timeToStationAttribute = NSAttributeDescription()
+    timeToStationAttribute.name = "timeToStation"
+    timeToStationAttribute.attributeType = NSAttributeType.Integer64AttributeType
+    timeToStationAttribute.optional = false
+    timeToStationAttribute.indexed = false
     
     
-    arrivalEntity.properties = [idNameAttribute,lineNameAttribute,platformNameAttribute,expectedArrivalAttribute]
+    arrivalEntity.properties = [idNameAttribute,lineNameAttribute,platformNameAttribute,timeToStationAttribute]
     
     model.entities = [arrivalEntity]
     
