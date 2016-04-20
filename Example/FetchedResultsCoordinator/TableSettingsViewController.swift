@@ -4,10 +4,16 @@ import UIKit
 import CoreData
 import FetchedResultsCoordinator
 
+protocol SettingsConfigurable {
+    var systemHeaders: Bool {get set}
+    var tableIndex: Bool {get set}
+    var defaultSectionTitle: String? {get set}
+}
+
 class TableSettingsViewController: UITableViewController {
 
     var fetchedResultsController: NSFetchedResultsController!
-    var tableDataSource: SimpleTableDataSource<Item>!
+    var tableDataSource: SettingsConfigurable!
     var coordinator: FetchedResultsCoordinator<Item>!
     
     @IBOutlet weak var showSystemHeadersSwitch: UISwitch!
@@ -53,3 +59,7 @@ class TableSettingsViewController: UITableViewController {
     }
     
 }
+
+
+// Adding SettingsConfigurable conformance to SimpleTableDataSource so we can inject specialized SimpleTableDataSources instances to the TableSettingsViewController without having to know their specialization ( and still be able to set their systemHeaders, tableIndex, and defaultSectionTitle )
+extension SimpleTableDataSource: SettingsConfigurable {}

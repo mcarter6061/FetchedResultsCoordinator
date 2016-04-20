@@ -319,22 +319,30 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ETVCCellReuseIdentifier" textLabel="eIr-Hh-HCA" style="IBUITableViewCellStyleDefault" id="Ndn-hC-7Ci">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ETVCCellReuseIdentifier" id="Ndn-hC-7Ci" customClass="CustomTableViewCell" customModule="FetchedResultsCoordinator_Example" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ndn-hC-7Ci" id="wEe-g5-5mk">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eIr-Hh-HCA">
-                                            <rect key="frame" x="15" y="0.0" width="570" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nT0-J9-ScE">
+                                            <rect key="frame" x="15" y="8" width="577" height="27.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstItem="nT0-J9-ScE" firstAttribute="trailing" secondItem="wEe-g5-5mk" secondAttribute="trailingMargin" id="YBc-jO-zan"/>
+                                        <constraint firstItem="nT0-J9-ScE" firstAttribute="leading" secondItem="wEe-g5-5mk" secondAttribute="leadingMargin" constant="7" id="daH-29-mxl"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="nT0-J9-ScE" secondAttribute="bottom" id="iB2-Nw-p3R"/>
+                                        <constraint firstItem="nT0-J9-ScE" firstAttribute="top" secondItem="wEe-g5-5mk" secondAttribute="topMargin" id="tlW-Ac-ORG"/>
+                                    </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="titleLabel" destination="nT0-J9-ScE" id="S9n-jw-dAR"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -662,6 +670,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="MQJ-dV-6Gw"/>
+        <segue reference="pW2-Hu-dn0"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -17,7 +17,7 @@ class ExampleCollectionViewController: UICollectionViewController, ExampleViewCo
  
     var fetchedResultsController: NSFetchedResultsController!
     var frcCoordinator: FetchedResultsCoordinator<Item>?
-    var dataSource: SimpleCollectionDataSource<Item>?
+    var dataSource: SimpleCollectionDataSource<Item,ExampleCollectionViewCell>?
     
     override func viewDidLoad() {
         
@@ -53,9 +53,7 @@ class ExampleCollectionViewController: UICollectionViewController, ExampleViewCo
 
 extension ExampleCollectionViewController: CollectionCellConfigurator {
     
-    func configureCell(cell: UICollectionViewCell, withManagedObject managedObject: Item) {
-        
-        guard let cell = cell as? ExampleCollectionViewCell else { return }
+    func configureCell(cell: ExampleCollectionViewCell, withManagedObject managedObject: Item) {
         
         cell.textLabel?.text = managedObject.name
     }

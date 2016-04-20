@@ -8,23 +8,24 @@ import UIKit
 public protocol TableCellConfigurator {
     
     associatedtype ManagedObjectType: NSManagedObject
+    associatedtype CellType: UITableViewCell
    
-    func configureCell( cell: UITableViewCell, withManagedObject managedObject: ManagedObjectType )
+    func configureCell( cell: CellType, withManagedObject managedObject: ManagedObjectType )
     
     func cellReuseIdentifierForManagedObject( managedObject: ManagedObjectType ) -> String
 }
 
-public class SimpleTableDataSource<ManagedObjectType:NSManagedObject>: NSObject, UITableViewDataSource {
+public class SimpleTableDataSource<ManagedObjectType:NSManagedObject,CellType:UITableViewCell>: NSObject, UITableViewDataSource {
     
     public private(set) var fetchedResultsController: NSFetchedResultsController
     public var systemHeaders: Bool = false
     public var tableIndex: Bool = false
     public var defaultSectionTitle: String?
 
-    private var configurator: AnyTableCellConfigurator<ManagedObjectType>
+    private var configurator: AnyTableCellConfigurator<ManagedObjectType,CellType>
 
-    public init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType>( cellConfigurator: U, fetchedResultsController: NSFetchedResultsController ) {
-        self.configurator = AnyTableCellConfigurator<ManagedObjectType>(cellConfigurator)
+    public init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType, U.CellType == CellType>( cellConfigurator: U, fetchedResultsController: NSFetchedResultsController ) {
+        self.configurator = AnyTableCellConfigurator<ManagedObjectType,CellType>(cellConfigurator)
         self.fetchedResultsController = fetchedResultsController
         super.init()
     }
@@ -67,8 +68,10 @@ public class SimpleTableDataSource<ManagedObjectType:NSManagedObject>: NSObject,
         
         let reuseIdentifier = configurator.cellReuseIdentifierForManagedObject(object)
         
-        let cell = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier, forIndexPath: indexPath)
-        
+        guard let cell = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier, forIndexPath: indexPath) as? CellType else {
+            fatalError("Incorrect table view cell type")
+        }
+
         configurator.configureCell(cell, withManagedObject: object)
         
         return cell
@@ -100,24 +103,29 @@ extension TableCellConfigurator {
     public func makeUpdateVisibleCell( tableView: UITableView ) -> ( NSIndexPath, ManagedObjectType ) -> Void {
         return { indexPath, object in
             guard let cell = tableView.cellForRowAtIndexPath( indexPath ) else { return }
-            self.configureCell(cell, withManagedObject: object )
+            
+            guard let customCell = cell as? CellType else {
+                fatalError("Incorrect table view cell type")
+            }
+
+            self.configureCell(customCell, withManagedObject: object )
         }
     }
 
 }
 
 // Type erased wrapper for TableCellConfigurator protocol
-private struct AnyTableCellConfigurator<ManagedObjectType:NSManagedObject>: TableCellConfigurator {
+private struct AnyTableCellConfigurator<ManagedObjectType:NSManagedObject,CellType:UITableViewCell>: TableCellConfigurator {
     
-    let _configureCell: (cell:UITableViewCell,withManagedObject:ManagedObjectType)->()
+    let _configureCell: (cell:CellType,withManagedObject:ManagedObjectType)->()
     let _cellReuseIdentifierForManagedObject: (managedObject: ManagedObjectType) -> String
     
-    init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType>( _ configurator: U ) {
+    init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType, U.CellType == CellType>( _ configurator: U ) {
         _cellReuseIdentifierForManagedObject = configurator.cellReuseIdentifierForManagedObject
         _configureCell = configurator.configureCell
     }
     
-    func configureCell(cell: UITableViewCell, withManagedObject managedObject: ManagedObjectType) {
+    func configureCell(cell: CellType, withManagedObject managedObject: ManagedObjectType) {
         _configureCell(cell: cell, withManagedObject: managedObject)
     }
     

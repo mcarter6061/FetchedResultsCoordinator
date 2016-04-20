@@ -48,6 +48,7 @@ describe(@"FetchedResultsCoordinatorTableTests", ^{
             [coordinator controllerDidChangeContent:mockFRC];
             OCMVerifyAll(mockTableView);
         });
+        
         it(@"updates table when data deleted", ^{
             OCMExpect([mockTableView deleteRowsAtIndexPaths:@[indexPathZero] withRowAnimation:UITableViewRowAnimationFade]);
             

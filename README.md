@@ -29,7 +29,7 @@ or for a collection view:
     frcCoordinator = FetchedResultsCoordinator<T>( coordinatee: collectionView!, fetchedResultsController: fetchedResultsController )
 ```
 
-FetchedResultsCoordinator is a generic type, generic over the model object its FRC is fetching.  So for a FRC which is fetching some custom `Animal` model object, a `FetchedResultsCoordinator<Animal>` is a coordinator which monitors the FRC and updates the table or collection view.
+FetchedResultsCoordinator is a generic type, generic over the model object its FRC is fetching.  So for a FRC which is fetching some custom `Animal` model object, a `FetchedResultsCoordinator<Animal>` is a coordinator which monitors the FRC and coordinates updates to a table or collection view.
 
 When you are ready to load the data call `loadData` on the coordinator and it will perform the fetch on the FRC and tell the table or collection view to reload its data.  This is used in place of the FRC `performFetch`, which should not be called directly when using the coordinator.
 
@@ -61,51 +61,74 @@ The constructor to `FetchedResultsCoordinator` takes any type conforming to the 
 
 ## Data Sources
 
-There is more boilerplate code to implement `UITableViewDataSource` and `UICollectionViewDataSource` protocols when the view is backed by a `NSFetchedResultsController`.  This component supplies two simple generic data source objects which query the FRC in the implementation of the data source protocols.  Again the goal is to wrap up the simple biolerplate code in a easy to integrate interface.
+There is more boilerplate code to implement `UITableViewDataSource` and `UICollectionViewDataSource` protocols when the table or collection view is backed by a `NSFetchedResultsController`.  This component supplies two simple generic data source objects (`SimpleTableDataSource` and `SimpleCollectionDataSource`) which implement the table/collection view data source protocols, using a passed in FRC to fetch the data.  Again the goal is to wrap up the simple biolerplate code in a easy to integrate interface.
 
 ### Table View Data Source
 
+The `SimpleTableDataSource` type is generic across the `NSManagedObject` model object sublcass, and the custom `UITableViewCell` subclass for the table view cells. For example, if there is an `AnimalCell` which is a `UITableViewCell` subclass:
+
 ```swift
-tableViewDataSource = SimpleTableDataSource<T>( cellConfigurator: self, fetchedResultsController: fetchedResultsController )
+tableViewDataSource = SimpleTableDataSource<Animal,AnimalCell>( cellConfigurator: self, fetchedResultsController: fetchedResultsController )
 tableView.dataSource = tableViewDataSource
 ```
 
-The cellConfigurator object (most likely your table view controller) must conform to the `TableCellConfigurator` protocol.
+#### Cell Configuration
+To allow custom configuration of the table view cells, a `cellConfigurator` instance is passed in the `SimpleTableDataSource` initializer.  This instance (most likely your table view controller) must conform to the `TableCellConfigurator` protocol:
 
 ```swift
 public protocol TableCellConfigurator {
     
     associatedtype ManagedObjectType: NSManagedObject
+    associatedtype CellType: UITableViewCell
    
-    func configureCell( cell: UITableViewCell, withManagedObject managedObject: ManagedObjectType )
+    func configureCell( cell: CellType, withManagedObject managedObject: ManagedObjectType )
     
     func cellReuseIdentifierForManagedObject( managedObject: ManagedObjectType ) -> String
 }
 ```
 
-The *associated type* is the model object type for the FRC.  So your implementation of these methods just needs to specify the type of your model object.  ie. For a FRC showing `Animal` objects, it would implement `func configureCell( cell: UITableViewCell, withManagedObject managedObject: Animal ) {...}`
+There are two *associated types* which will be supplied by the `TableCellConfigurator` implementation, which will be the same types specified in the *generic argument list* for the `SimpleTableDataSource` instance.  ie. For a FRC fetching `Animal` objects, the type conforming to `TableCellConfigurator` would implement something like:
 
-Those two methods and hooking up a `SimpleTableDataSource` instance to your table view's `dataSource` is enough to get a table view up and running. Be aware that the `dataSource` property on `UITableView` is weak, which means you will need to hold another strong reference to the instance elsewhere.
+```swift
+func configureCell( cell: AnimalCell, withManagedObject managedObject: Animal ) { 
+// cell configuration
+cell.animalName = managedObject.name
+... 
+}
 
-`cellReuseIdentifierForManagedObject` can just return a hardcoded identifier if the table only has one prototype cell.  This must be the cell's reuse identifier in your xib / storyboard.  If the table has multiple prototype cells the method should return the reuse identifier that applies to the row for the given associated model object.  
+func cellReuseIdentifierForManagedObject( managedObject: Animal ) -> String { 
+    return "AnimalCellReuseIdentifier"
+}
+```
 
-The `SimpleTableDataSource` will use the identifier returned to dequeue cells, and it will call the cell configurator `configureCell` to give you a chance to configure the cell with the data from the object for that row.
+The `SimpleTableDataSource` will use the identifier string returned from `cellReuseIdentifierForManagedObject` to dequeue cells, and it will call the `configureCell` to give you a chance to configure the cell with the data from the model object for that row.
 
-The data source also supports table view system headers and table view indexes based on FRC section indexes.
+Implementing those two methods and hooking up a `SimpleTableDataSource` instance to the table view's `dataSource` property is enough to get a table view up and running. Be aware that the `dataSource` property on `UITableView` is weak, which means you will need to hold another strong reference to the instance elsewhere.
+
+`cellReuseIdentifierForManagedObject` can just return a hardcoded identifier if the table only has one prototype cell.  This must be the cell's reuse identifier in your xib / storyboard.  If the table has multiple prototype cells the method should return the reuse identifier that applies to the row for the given associated model object.  In this case the `CellType` will have to be `UITableViewCell` and downcast to the cell subclass appropriately in the `configureCell` implementation.
+
+If you are using a system `UITableViewCell` instead of a custom subclass ( ie a Basic, Right Detail, Left Detail, or Subtitle style cell), just use `UITableViewCell` as the `CellType` in `configureCell` and in the `SimpleTableDataSource` generic argument list.
+
+#### Section headers and section index
+The data source also supports `UITableView` system headers and section indexes based on FRC section indexes.
 
 ```swift
     public var systemHeaders: Bool = false
     public var tableIndex: Bool = false
     public var defaultSectionTitle: String?
 ```
+
 When `systemHeaders` is set the section name from the FRC will be set as the title of each section header.  When `tableIndex` is set the table view will display the section index, using the capitalized first letter of each section name in the FRC. See the subclassing notes of the NSFetchedResultsController documentation for a discussion on how to customize the section indexs.  When `defaultSectionTitle` is set this will be used for the table view's section header.
 
 See the Example project `ExampleTableViewController` class for an example of how to use a `SimpleTableDataSource` in a `UITableViewController` subclass.  See the `ExampleTableViewSubviewController` class for an example of how to use a `SimpleTableDataSource` in a `UIViewController` subclass that has a `UITableView` subview.
 
 ### Collection View Data Source
 
+The `SimpleCollectionDataSource` follows the same conventions as the `SimpleTableDataSource`.  It is also generic across the model object and cell subclass.
+
 ```swift
-collectionViewDataSource = SimpleCollectionDataSource<T>( fetchedResultsController: fetchedResultsController, cellConfigurator: self, supplementaryViewConfigurator: self )
+dataSource = SimpleCollectionDataSource<Animal,AnimalCell>( fetchedResultsController: fetchedResultsController, cellConfigurator: self, supplementaryViewConfigurator: self )
+collectionView.dataSource = dataSource
 ```
 
 The collection data source has two configurators, one for cells and one for supplementary views.  
@@ -114,8 +137,9 @@ The collection data source has two configurators, one for cells and one for supp
 public protocol CollectionCellConfigurator {
     
     associatedtype ManagedObjectType: NSManagedObject
+    associatedtype CellType: UICollectionViewCell
     
-    func configureCell( cell: UICollectionViewCell, withManagedObject managedObject: ManagedObjectType )
+    func configureCell( cell: CellType, withManagedObject managedObject: ManagedObjectType )
     func cellReuseIdentifierForManagedObject( managedObject: ManagedObjectType ) -> String
 }
 
@@ -141,9 +165,9 @@ Both `TableCellConfigurator` and `CollectionCellConfigurator` provide an default
     frcCoordinator = FetchedResultsCoordinator<Animal>( coordinatee: tableView, fetchedResultsController: fetchedResultsController, updateCell: updateCell )
 ```
 
-### Objective-C usage
+## Objective-C usage
 
-There are versions of `FetchedResultsCoordinator`, `SimpleTableDataSource` and `SimpleCollectionDataSource` which have been specialized to model objects of type `NSManagedObject`. The specialized versions are exposed to Objective-C using those same names, so all three classes can be used in Objective-C code, just without the advantage of knowing the model object subclass in method arguments.
+There are versions of `FetchedResultsCoordinator`, `SimpleTableDataSource` and `SimpleCollectionDataSource` which have been specialized to model objects of type `NSManagedObject` and cells of type `UITableViewCell`/`UICollectionViewCell`. The specialized versions are exposed to Objective-C using those same names, so all three classes can be used in Objective-C code, just without the advantage of knowing the model object subclass and the cell view subclass in method arguments.
 
 ## Author
 

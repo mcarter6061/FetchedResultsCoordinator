@@ -10,7 +10,7 @@ import UIKit
 
 @objc(SimpleTableDataSource) public class SimpleTableDataSourceObjC: NSObject {
     
-    private var dataSource: SimpleTableDataSource<NSManagedObject>!
+    private var dataSource: SimpleTableDataSource<NSManagedObject,UITableViewCell>!
     
     public var systemHeaders:Bool {
         get { return dataSource.systemHeaders }
@@ -29,7 +29,7 @@ import UIKit
     
     public init(cellConfigurator: TableCellConfiguratorObjC, fetchedResultsController: NSFetchedResultsController) {
         let configurator = _TableCellConfiguratorObjC( cellConfigurator: cellConfigurator )
-        self.dataSource = SimpleTableDataSource<NSManagedObject>(cellConfigurator: configurator, fetchedResultsController: fetchedResultsController)
+        self.dataSource = SimpleTableDataSource(cellConfigurator: configurator, fetchedResultsController: fetchedResultsController)
     }
     
     @objc public func sectionInfoForSection( sectionIndex: Int ) -> NSFetchedResultsSectionInfo? {

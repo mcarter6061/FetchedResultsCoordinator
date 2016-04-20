@@ -11,7 +11,7 @@ class ExampleTableViewSubviewController: UIViewController, ExampleViewController
     
     var fetchedResultsController: NSFetchedResultsController!
     
-    lazy var dataSource:SimpleTableDataSource<Item> = SimpleTableDataSource(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
+    lazy var dataSource:SimpleTableDataSource<Item,UITableViewCell> = SimpleTableDataSource(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
     
     lazy var frcCoordinator: FetchedResultsCoordinator<Item> = FetchedResultsCoordinator( coordinatee: self.tableView!, fetchedResultsController: self.fetchedResultsController, updateCell: self.makeUpdateVisibleCell(self.tableView) )
     
@@ -24,28 +24,9 @@ class ExampleTableViewSubviewController: UIViewController, ExampleViewController
         
         frcCoordinator.loadData()
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-
-    
-    // MARK: - Navigation
-
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        if segue.identifier == "TableSettingsSegue" {
-            if  let navController = segue.destinationViewController as? UINavigationController,
-                let destinationViewController = navController.topViewController as? TableSettingsViewController {
-                    destinationViewController.fetchedResultsController = fetchedResultsController
-                    destinationViewController.coordinator = frcCoordinator
-                    destinationViewController.tableDataSource = dataSource
-            }
-        }
-    }
 }
+
+// MARK: - TableCellConfigurator methods
 
 extension ExampleTableViewSubviewController: TableCellConfigurator {
     
@@ -60,3 +41,28 @@ extension ExampleTableViewSubviewController: TableCellConfigurator {
         return "ETVSCCellReuseIdentifier"
     }
 }
+
+// MARK: - Navigation
+
+extension ExampleTableViewSubviewController: SegueHandlerType {
+    
+    enum SegueIdentifier: String {
+        case TableSettingsSegue
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        switch segueIdentifierForSegue(segue) {
+            
+        case .TableSettingsSegue:
+            
+            guard let navController = segue.destinationViewController as? UINavigationController,
+                let destinationViewController = navController.topViewController as? TableSettingsViewController else { fatalError("Unexpected view controller hierarchy") }
+            
+            destinationViewController.fetchedResultsController = fetchedResultsController!
+            destinationViewController.coordinator = frcCoordinator
+            destinationViewController.tableDataSource = dataSource
+        }
+    }
+}
+

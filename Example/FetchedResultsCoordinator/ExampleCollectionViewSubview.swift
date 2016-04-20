@@ -12,7 +12,7 @@ class ExampleCollectionViewSubviewController: UIViewController, ExampleViewContr
 
     var fetchedResultsController: NSFetchedResultsController!
     var frcCoordinator: FetchedResultsCoordinator<Item>?
-    var dataSource: SimpleCollectionDataSource<Item>?
+    var dataSource: SimpleCollectionDataSource<Item,ExampleCollectionViewCell>?
     
     override func viewDidLoad() {
         
@@ -47,10 +47,8 @@ class ExampleCollectionViewSubviewController: UIViewController, ExampleViewContr
 
 extension ExampleCollectionViewSubviewController: CollectionCellConfigurator {
 
-    func configureCell(cell: UICollectionViewCell, withManagedObject managedObject: Item) {
+    func configureCell(cell: ExampleCollectionViewCell, withManagedObject managedObject: Item) {
 
-        guard let cell = cell as? ExampleCollectionViewCell else { return }
-        
         cell.textLabel?.text = managedObject.name
     }
     

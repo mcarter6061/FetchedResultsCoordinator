@@ -12,7 +12,7 @@ import CoreData
 
     public var fetchedResultsController: NSFetchedResultsController { return dataSource.fetchedResultsController }
 
-    private var dataSource: SimpleCollectionDataSource<NSManagedObject>
+    private var dataSource: SimpleCollectionDataSource<NSManagedObject,UICollectionViewCell>
     
     public init( fetchedResultsController: NSFetchedResultsController, cellConfigurator: CollectionCellConfiguratorObjC, supplementaryViewConfigurator: CollectionViewSupplementaryViewConfigurator? ) {
         let cellConfigurator = _CollectionCellConfiguratorObjC(cellConfigurator: cellConfigurator)

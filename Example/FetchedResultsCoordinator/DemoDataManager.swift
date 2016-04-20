@@ -59,7 +59,7 @@ class DemoDataManager {
                     case .Insert:
                         object.hidden = false
                     case .Update:
-                        object.name = object.name.flatMap{ return $0.characters.last == "📝" ? String($0.characters.dropLast()) : $0 + "📝" }
+                        object.name = self.toggleLastChar( object.name )
                     case .Move:
                         if let swapPositionWithObject = objects.randomItem() {
                             swap(&object.ordinal, &swapPositionWithObject.ordinal)
@@ -77,6 +77,10 @@ class DemoDataManager {
                 print( "Error saving background context \(error)" )
             }
         }
+    }
+    
+    func toggleLastChar( text: String? ) -> String? {
+        return text.flatMap{ return $0.characters.last == "📝" ? String($0.characters.dropLast()) : $0 + "📝" }
     }
     
 }
