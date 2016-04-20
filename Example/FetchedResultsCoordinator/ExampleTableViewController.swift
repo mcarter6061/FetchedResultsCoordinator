@@ -53,20 +53,21 @@ extension ExampleTableViewController: SegueHandlerType {
     
     enum SegueIdentifier: String {
         case TableSettingsSegue
+        case UnwindToDemoViewController
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         switch segueIdentifierForSegue(segue) {
-            
         case .TableSettingsSegue:
-            
             guard let navController = segue.destinationViewController as? UINavigationController,
                 let destinationViewController = navController.topViewController as? TableSettingsViewController else { fatalError("Unexpected view controller hierarchy") }
             
             destinationViewController.fetchedResultsController = fetchedResultsController!
             destinationViewController.coordinator = frcCoordinator!
             destinationViewController.tableDataSource = dataSource!
+
+        case .UnwindToDemoViewController: break
         }
     }
 }
