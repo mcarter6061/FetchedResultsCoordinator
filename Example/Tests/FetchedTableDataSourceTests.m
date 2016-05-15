@@ -7,14 +7,14 @@
 
 #import "FetchedResultsCoordinator-swift.h"
 
-SpecBegin(SimpleTableDataSource)
+SpecBegin(FetchedTableDataSource)
 
 
-describe(@"SimpleTableDataSource", ^{
+describe(@"FetchedTableDataSource", ^{
 
     NSString *reuseIdentifier = @"reuseIdentifier";
 
-    __block SimpleTableDataSource *dataSource;
+    __block FetchedTableDataSource *dataSource;
     __block id mockFRC;
     __block id mockCellConfigurator;
     __block id mockTableView;
@@ -26,9 +26,9 @@ describe(@"SimpleTableDataSource", ^{
         mockObject = OCMClassMock([NSManagedObject class]);
         
         mockCellConfigurator = OCMProtocolMock(@protocol(TableCellConfigurator));
-        OCMStub([mockCellConfigurator cellReuseIdentifierForManagedObject:mockObject]).andReturn(reuseIdentifier);
+        OCMStub([mockCellConfigurator cellReuseIdentifierForObject:mockObject atIndexPath:OCMOCK_ANY]).andReturn(reuseIdentifier);
         
-        dataSource = [[SimpleTableDataSource alloc] initWithCellConfigurator:mockCellConfigurator fetchedResultsController:mockFRC];
+        dataSource = [[FetchedTableDataSource alloc] initWithCellConfigurator:mockCellConfigurator fetchedResultsController:mockFRC];
     });
     
     it(@"should create a data source", ^{
@@ -60,9 +60,9 @@ describe(@"SimpleTableDataSource", ^{
         
         id mockCell = OCMClassMock([UITableViewCell class]);
         OCMStub([mockTableView dequeueReusableCellWithIdentifier:reuseIdentifier forIndexPath:zeroIndexPath]).andReturn(mockCell);
-        
+
         [dataSource tableView:mockTableView cellForRowAtIndexPath:zeroIndexPath];
-        OCMVerify([mockCellConfigurator configureCell:mockCell withManagedObject:mockObject]);
+        OCMVerify([mockCellConfigurator configureCell:mockCell withObject:mockObject atIndexPath:zeroIndexPath]);
     });
 
     context(@"with two sections", ^{

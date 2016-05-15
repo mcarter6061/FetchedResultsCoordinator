@@ -5,6 +5,10 @@ import CoreData
 import UIKit
 
 
+public protocol FetchedResultsCoordinatorDelegate {
+
+    func numberOfObjectsChanged( count: Int )
+}
 
 public protocol Coordinatable {
     
@@ -28,6 +32,8 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
         }
     }
     
+    public var delegate: FetchedResultsCoordinatorDelegate?
+    
     public private(set) var fetchedResultsController: NSFetchedResultsController
     private var changes = ChangeSet()
     private var coordinatee: Coordinatable
@@ -40,7 +46,10 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
         
         super.init()
     }
-    
+
+    deinit {
+        fetchedResultsController.delegate = nil
+    }
    
     public func loadData() {
         
@@ -68,11 +77,21 @@ public class FetchedResultsCoordinator<ManagedObjectType:NSManagedObject>: NSObj
     public func controllerWillChangeContent(controller: NSFetchedResultsController) {
     }
     
+    var numberOfObjects: Int = 0 {
+        didSet {
+            if oldValue != numberOfObjects {
+                delegate?.numberOfObjectsChanged(numberOfObjects)
+            }
+        }
+    }
+    
     public func controllerDidChangeContent(controller: NSFetchedResultsController) {
         
         coordinatee.apply(changes)
         
         changes = ChangeSet()
+        
+        numberOfObjects = fetchedResultsController.fetchedObjects?.count ?? 0
     }
     
     public func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {

@@ -15,6 +15,8 @@ enum TableViewInvocation: Equatable {
     case MoveRowAtIndexPath(indexPath: NSIndexPath, newIndexPath: NSIndexPath)
     case BeginUpdates
     case EndUpdates
+    case SelectRowAtIndexPath( indexPath: NSIndexPath? )
+    case DeselectRowAtIndexPath( indexPath: NSIndexPath )
 }
 
 func ==(lhs: TableViewInvocation, rhs: TableViewInvocation) -> Bool {
@@ -27,6 +29,8 @@ func ==(lhs: TableViewInvocation, rhs: TableViewInvocation) -> Bool {
     case let (.MoveRowAtIndexPath(lhsIndexPaths), .MoveRowAtIndexPath(rhsIndexPaths)) where lhsIndexPaths == rhsIndexPaths:return true
     case (.BeginUpdates,.BeginUpdates):return true
     case (.EndUpdates,.EndUpdates):return true
+    case let (.SelectRowAtIndexPath(lhsIndexPath), .SelectRowAtIndexPath(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
+    case let (.DeselectRowAtIndexPath(lhsIndexPath), .DeselectRowAtIndexPath(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
     default: return false
     }
 }
@@ -34,6 +38,7 @@ func ==(lhs: TableViewInvocation, rhs: TableViewInvocation) -> Bool {
 
 class SpyTableView: UITableView {
     var capturedCalls: [TableViewInvocation] = []
+    var selectedRows: [NSIndexPath]?
     
     override func insertSections(sections: NSIndexSet, withRowAnimation animation: UITableViewRowAnimation) {
         capturedCalls.append(.InsertSections(sections))
@@ -64,6 +69,22 @@ class SpyTableView: UITableView {
     
     override func endUpdates() {
         capturedCalls.append(.EndUpdates)
+    }
+    
+    override func selectRowAtIndexPath(indexPath: NSIndexPath?, animated: Bool, scrollPosition: UITableViewScrollPosition) {
+        capturedCalls.append(.SelectRowAtIndexPath(indexPath: indexPath))
+    }
+    
+    override func deselectRowAtIndexPath(indexPath: NSIndexPath, animated: Bool) {
+        capturedCalls.append(.DeselectRowAtIndexPath(indexPath: indexPath))
+    }
+    
+    override var indexPathForSelectedRow: NSIndexPath? {
+        return selectedRows?.first
+    }
+    
+    override var indexPathsForSelectedRows: [NSIndexPath]? {
+        return selectedRows
     }
     
 }

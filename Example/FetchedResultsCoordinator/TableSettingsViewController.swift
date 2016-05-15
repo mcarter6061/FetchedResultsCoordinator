@@ -62,4 +62,4 @@ class TableSettingsViewController: UITableViewController {
 
 
 // Adding SettingsConfigurable conformance to SimpleTableDataSource so we can inject specialized SimpleTableDataSources instances to the TableSettingsViewController without having to know their specialization ( and still be able to set their systemHeaders, tableIndex, and defaultSectionTitle )
-extension SimpleTableDataSource: SettingsConfigurable {}
+extension FetchedTableDataSource: SettingsConfigurable {}

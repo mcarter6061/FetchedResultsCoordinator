@@ -13,14 +13,14 @@ class ExampleTableViewController: UITableViewController, ExampleViewControllersW
 
     var fetchedResultsController: NSFetchedResultsController!
     var frcCoordinator: FetchedResultsCoordinator<Item>?
-    var dataSource: SimpleTableDataSource<Item,CustomTableViewCell>?
+    var dataSource: FetchedTableDataSource<Item,CustomTableViewCell>?
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
         if dataSource == nil {
-            dataSource = SimpleTableDataSource( cellConfigurator: self, fetchedResultsController: fetchedResultsController )
+            dataSource = FetchedTableDataSource( cellConfigurator: self, fetchedResultsController: fetchedResultsController )
             dataSource?.systemHeaders = true
         }
         tableView.dataSource = dataSource
@@ -37,12 +37,12 @@ class ExampleTableViewController: UITableViewController, ExampleViewControllersW
 
 extension ExampleTableViewController: TableCellConfigurator {
     
-    func configureCell(cell: CustomTableViewCell, withManagedObject managedObject: Item) {
+    func configureCell(cell: CustomTableViewCell, withObject object: Item, atIndexPath indexPath: NSIndexPath) {
 
-        cell.titleLabel!.text = managedObject.name
+        cell.titleLabel!.text = object.name
     }
     
-    func cellReuseIdentifierForManagedObject(managedObject: Item) -> String {
+    func cellReuseIdentifierForObject(object: Item, atIndexPath indexPath: NSIndexPath) -> String {
         return "ETVCCellReuseIdentifier"
     }
 }

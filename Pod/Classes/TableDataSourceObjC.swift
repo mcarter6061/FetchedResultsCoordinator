@@ -3,14 +3,14 @@ import UIKit
 
 @objc(TableCellConfigurator) public protocol TableCellConfiguratorObjC {
     
-    func configureCell(cell: UITableViewCell, withManagedObject managedObject: NSManagedObject)
+    func configureCell(cell: UITableViewCell, withObject object: NSManagedObject, atIndexPath indexPath: NSIndexPath)
     
-    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String
+    func cellReuseIdentifierForObject(object: NSManagedObject, atIndexPath indexPath: NSIndexPath) -> String
 }
 
-@objc(SimpleTableDataSource) public class SimpleTableDataSourceObjC: NSObject {
+@objc(FetchedTableDataSource) public class FetchedTableDataSourceObjC: NSObject {
     
-    private var dataSource: SimpleTableDataSource<NSManagedObject,UITableViewCell>!
+    private var dataSource: FetchedTableDataSource<NSManagedObject,UITableViewCell>!
     
     public var systemHeaders:Bool {
         get { return dataSource.systemHeaders }
@@ -29,7 +29,7 @@ import UIKit
     
     public init(cellConfigurator: TableCellConfiguratorObjC, fetchedResultsController: NSFetchedResultsController) {
         let configurator = _TableCellConfiguratorObjC( cellConfigurator: cellConfigurator )
-        self.dataSource = SimpleTableDataSource(cellConfigurator: configurator, fetchedResultsController: fetchedResultsController)
+        self.dataSource = FetchedTableDataSource(cellConfigurator: configurator, fetchedResultsController: fetchedResultsController)
     }
     
     @objc public func sectionInfoForSection( sectionIndex: Int ) -> NSFetchedResultsSectionInfo? {
@@ -63,7 +63,7 @@ import UIKit
 }
 
 private class _TableCellConfiguratorObjC: TableCellConfigurator {
-    // Implements swift generic protocol by proxying to passed in ObjC version, this is needed to pass into our SimpleTableDataSource initializer.
+    // Implements swift generic protocol by proxying to passed in ObjC version, this is needed to pass into our FetchedTableDataSource initializer.
     
     let configurator: TableCellConfiguratorObjC
     
@@ -71,12 +71,12 @@ private class _TableCellConfiguratorObjC: TableCellConfigurator {
         self.configurator = cellConfigurator
     }
     
-    func configureCell(cell: UITableViewCell, withManagedObject managedObject: NSManagedObject) {
-        configurator.configureCell(cell, withManagedObject: managedObject)
+    func configureCell(cell: UITableViewCell, withObject object: NSManagedObject, atIndexPath indexPath: NSIndexPath) {
+        configurator.configureCell(cell, withObject: object, atIndexPath: indexPath)
     }
     
-    func cellReuseIdentifierForManagedObject(managedObject: NSManagedObject) -> String {
-        return configurator.cellReuseIdentifierForManagedObject(managedObject)
+    func cellReuseIdentifierForObject(object: NSManagedObject, atIndexPath indexPath: NSIndexPath) -> String {
+        return configurator.cellReuseIdentifierForObject(object, atIndexPath: indexPath)
     }
 }
 

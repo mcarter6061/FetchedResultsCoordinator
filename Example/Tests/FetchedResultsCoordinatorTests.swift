@@ -6,18 +6,34 @@ import Nimble
 @testable import FetchedResultsCoordinator
 import CoreData
 
-class Item: NSManagedObject {
-    var property: String?
+protocol SpyFRCObject: class {
+    var indexPath: NSIndexPath? {get}
 }
 
-class SpyFRC: NSFetchedResultsController {
+class NoObject: AnyObject {}
+
+class SpyFRC<T:SpyFRCObject>: NSFetchedResultsController {
     
     var performFetchedCalled = false
 
     override func performFetch() throws {
         performFetchedCalled = true
     }
+
+    var objects: [T] = []
     
+    override func objectAtIndexPath(indexPath: NSIndexPath) -> AnyObject {
+        // this is a bit weird, to override the method we can't add throws or any way to feedback that there is no object at this index.  In reality the program would crash with a runtime error.
+        return objects.filter{$0.indexPath == indexPath}.first ?? NoObject()
+    }
+    
+    override func indexPathForObject(object: AnyObject) -> NSIndexPath? {
+        return objects.filter{object === $0}.first?.indexPath
+    }
+    
+    override init() {
+        super.init()
+    }
 }
 
 class SpyCoordinatee: Coordinatable {
@@ -48,6 +64,9 @@ public func ==(lhs: FetchedObjectChange, rhs: FetchedObjectChange) -> Bool {
     }
 }
 
+class MockItem: NSManagedObject, SpyFRCObject {
+    var indexPath: NSIndexPath?
+}
 
 class FetchedResultsCoordinatorTests: QuickSpec {
     
@@ -59,11 +78,11 @@ class FetchedResultsCoordinatorTests: QuickSpec {
             let indexPathOne = NSIndexPath( forRow:1, inSection:0 )
             let mockObject = NSManagedObject()
 
-            let spyFRC = SpyFRC()
+            let spyFRC:SpyFRC<MockItem> = SpyFRC()
             let spyCoordinatee = SpyCoordinatee()
             var updateCellCalled = false
             
-            let sut = FetchedResultsCoordinator<Item>( coordinatee: spyCoordinatee, fetchedResultsController: spyFRC, updateCell: { _ in updateCellCalled = true} )
+            let sut = FetchedResultsCoordinator<MockItem>( coordinatee: spyCoordinatee, fetchedResultsController: spyFRC, updateCell: { _ in updateCellCalled = true} )
 
             it("reloads data") {
                 sut.loadData()

@@ -30,7 +30,7 @@ class DemoDataManager {
             let sections = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters.map{"\($0) Section"}.randomItems(numberOfSections)
 
             for i in (0..<numberOfItems) {
-                let item = NSEntityDescription.insertNewObjectForEntityForName("Item", inManagedObjectContext: self.managedObjectContext) as! Item
+                let item = NSEntityDescription.insertNewObjectForEntityForName(Item.entityName, inManagedObjectContext: self.managedObjectContext) as! Item
                 item.name = "Item \(i)"
                 item.ordinal = i
                 item.section = sections.randomItem()
@@ -44,7 +44,7 @@ class DemoDataManager {
             
             let numberOfChanges = Int(arc4random_uniform(5))
 
-            let fetchRequest = NSFetchRequest(entityName: "Item" )
+            let fetchRequest = NSFetchRequest(entityName: Item.entityName )
             
             let objects = try! self.backgroundContext.executeFetchRequest(fetchRequest) as! [Item]
             

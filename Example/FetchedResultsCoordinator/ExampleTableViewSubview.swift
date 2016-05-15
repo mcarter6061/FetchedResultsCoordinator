@@ -11,7 +11,7 @@ class ExampleTableViewSubviewController: UIViewController, ExampleViewController
     
     var fetchedResultsController: NSFetchedResultsController!
     
-    lazy var dataSource:SimpleTableDataSource<Item,UITableViewCell> = SimpleTableDataSource(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
+    lazy var dataSource:FetchedTableDataSource<Item,UITableViewCell> = FetchedTableDataSource(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
     
     lazy var frcCoordinator: FetchedResultsCoordinator<Item> = FetchedResultsCoordinator( coordinatee: self.tableView!, fetchedResultsController: self.fetchedResultsController, updateCell: self.makeUpdateVisibleCell(self.tableView) )
     
@@ -30,14 +30,15 @@ class ExampleTableViewSubviewController: UIViewController, ExampleViewController
 
 extension ExampleTableViewSubviewController: TableCellConfigurator {
     
-    typealias ManagedObjectType = Item
+    typealias ObjectType = Item
+    typealias CellType = UITableViewCell
     
-    func configureCell(cell: UITableViewCell, withManagedObject managedObject: Item) {
+    func configureCell( cell: UITableViewCell, withObject object: Item, atIndexPath indexPath: NSIndexPath ) {
         
-        cell.textLabel!.text = managedObject.name
+        cell.textLabel!.text = object.name
     }
     
-    func cellReuseIdentifierForManagedObject(managedObject: Item) -> String {
+    func cellReuseIdentifierForObject( object: Item, atIndexPath indexPath: NSIndexPath ) -> String {
         return "ETVSCCellReuseIdentifier"
     }
 }

@@ -7,15 +7,65 @@ import UIKit
 
 public protocol TableCellConfigurator {
     
-    associatedtype ManagedObjectType: NSManagedObject
+    associatedtype ObjectType
     associatedtype CellType: UITableViewCell
    
-    func configureCell( cell: CellType, withManagedObject managedObject: ManagedObjectType )
+    func configureCell( cell: CellType, withObject object: ObjectType, atIndexPath indexPath: NSIndexPath )
     
-    func cellReuseIdentifierForManagedObject( managedObject: ManagedObjectType ) -> String
+    func cellReuseIdentifierForObject( object: ObjectType, atIndexPath indexPath: NSIndexPath ) -> String
 }
 
-public class SimpleTableDataSource<ManagedObjectType:NSManagedObject,CellType:UITableViewCell>: NSObject, UITableViewDataSource {
+
+public class ListTableDataSource<ObjectType:Equatable,CellType:UITableViewCell>: NSObject, UITableViewDataSource {
+
+    public private(set) var data: [ObjectType]
+    public var systemHeaders: Bool = false
+    public var tableIndex: Bool = false
+    public var defaultSectionTitle: String?
+    
+    private var configurator: AnyTableCellConfigurator<ObjectType,CellType>
+
+    public init<U:TableCellConfigurator where U.ObjectType == ObjectType, U.CellType == CellType>( cellConfigurator: U, data: [ObjectType] ) {
+        self.configurator = AnyTableCellConfigurator(cellConfigurator)
+        self.data = data
+        super.init()
+    }
+    
+    // MARK: - UITableViewDataSource methods
+    
+    public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        
+        return 1
+    }
+    
+    public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return data.count
+    }
+    
+    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        let object = data[indexPath.row]
+        
+        let reuseIdentifier = configurator.cellReuseIdentifierForObject(object, atIndexPath: indexPath)
+        
+        guard let cell = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier, forIndexPath: indexPath) as? CellType else {
+            fatalError("Incorrect table view cell type")
+        }
+        
+        configurator.configureCell(cell, withObject: object, atIndexPath: indexPath)
+        
+        return cell
+    }
+    
+    public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return defaultSectionTitle
+    }
+    
+}
+
+
+public class FetchedTableDataSource<ManagedObjectType:NSManagedObject,CellType:UITableViewCell>: NSObject, UITableViewDataSource {
     
     public private(set) var fetchedResultsController: NSFetchedResultsController
     public var systemHeaders: Bool = false
@@ -24,11 +74,12 @@ public class SimpleTableDataSource<ManagedObjectType:NSManagedObject,CellType:UI
 
     private var configurator: AnyTableCellConfigurator<ManagedObjectType,CellType>
 
-    public init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType, U.CellType == CellType>( cellConfigurator: U, fetchedResultsController: NSFetchedResultsController ) {
-        self.configurator = AnyTableCellConfigurator<ManagedObjectType,CellType>(cellConfigurator)
+    public init<U:TableCellConfigurator where U.ObjectType == ManagedObjectType, U.CellType == CellType>( cellConfigurator: U, fetchedResultsController: NSFetchedResultsController ) {
+        self.configurator = AnyTableCellConfigurator(cellConfigurator)
         self.fetchedResultsController = fetchedResultsController
         super.init()
     }
+    
     
     public func sectionInfoForSection( sectionIndex: Int ) -> NSFetchedResultsSectionInfo? {
         
@@ -38,7 +89,6 @@ public class SimpleTableDataSource<ManagedObjectType:NSManagedObject,CellType:UI
         
         return nil
     }
-
 
     // MARK: - UITableViewDataSource methods
 
@@ -66,13 +116,13 @@ public class SimpleTableDataSource<ManagedObjectType:NSManagedObject,CellType:UI
             fatalError("Incorrect object type")
         }
         
-        let reuseIdentifier = configurator.cellReuseIdentifierForManagedObject(object)
+        let reuseIdentifier = configurator.cellReuseIdentifierForObject(object, atIndexPath: indexPath)
         
         guard let cell = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier, forIndexPath: indexPath) as? CellType else {
             fatalError("Incorrect table view cell type")
         }
 
-        configurator.configureCell(cell, withManagedObject: object)
+        configurator.configureCell(cell, withObject: object, atIndexPath: indexPath)
         
         return cell
     }
@@ -100,7 +150,7 @@ extension TableCellConfigurator {
     // Helper method to create the UpdateCell function passed into a FetchedResultsCoordinator
     // The function fetches the visible cell at indexPath and if it exists configures it again
     // This is used to avoid the animation "flash" when you call tableView.reloadRowsAtIndexPaths
-    public func makeUpdateVisibleCell( tableView: UITableView ) -> ( NSIndexPath, ManagedObjectType ) -> Void {
+    public func makeUpdateVisibleCell( tableView: UITableView ) -> ( NSIndexPath, ObjectType ) -> Void {
         return { indexPath, object in
             guard let cell = tableView.cellForRowAtIndexPath( indexPath ) else { return }
             
@@ -108,29 +158,29 @@ extension TableCellConfigurator {
                 fatalError("Incorrect table view cell type")
             }
 
-            self.configureCell(customCell, withManagedObject: object )
+            self.configureCell(customCell, withObject: object, atIndexPath: indexPath )
         }
     }
 
 }
 
 // Type erased wrapper for TableCellConfigurator protocol
-private struct AnyTableCellConfigurator<ManagedObjectType:NSManagedObject,CellType:UITableViewCell>: TableCellConfigurator {
+private struct AnyTableCellConfigurator<ObjectType,CellType:UITableViewCell>: TableCellConfigurator {
     
-    let _configureCell: (cell:CellType,withManagedObject:ManagedObjectType)->()
-    let _cellReuseIdentifierForManagedObject: (managedObject: ManagedObjectType) -> String
+    let _configureCell: (cell: CellType, withObject: ObjectType, atIndexPath: NSIndexPath)->()
+    let _cellReuseIdentifierForObject: (object: ObjectType, atIndexPath: NSIndexPath) -> String
     
-    init<U:TableCellConfigurator where U.ManagedObjectType == ManagedObjectType, U.CellType == CellType>( _ configurator: U ) {
-        _cellReuseIdentifierForManagedObject = configurator.cellReuseIdentifierForManagedObject
+    init<U:TableCellConfigurator where U.ObjectType == ObjectType, U.CellType == CellType>( _ configurator: U ) {
+        _cellReuseIdentifierForObject = configurator.cellReuseIdentifierForObject
         _configureCell = configurator.configureCell
     }
     
-    func configureCell(cell: CellType, withManagedObject managedObject: ManagedObjectType) {
-        _configureCell(cell: cell, withManagedObject: managedObject)
+    func configureCell(cell: CellType, withObject object: ObjectType, atIndexPath indexPath: NSIndexPath) {
+        _configureCell(cell: cell, withObject: object, atIndexPath: indexPath)
     }
     
-    func cellReuseIdentifierForManagedObject(managedObject: ManagedObjectType) -> String {
-        return _cellReuseIdentifierForManagedObject(managedObject: managedObject)
+    func cellReuseIdentifierForObject(object: ObjectType, atIndexPath indexPath: NSIndexPath) -> String {
+        return _cellReuseIdentifierForObject(object: object, atIndexPath: indexPath)
     }
     
 }
