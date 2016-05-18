@@ -14,6 +14,8 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		B9159F101CE87A3800612C11 /* ManagedObjectContextFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91EF9E61BF2558F00EFBE64 /* ManagedObjectContextFactory.swift */; };
 		B9159F111CE87A7200612C11 /* Test.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B9159F0D1CE8791C00612C11 /* Test.xcdatamodeld */; };
+		B9159F141CE9285A00612C11 /* ListTableDataSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9159F121CE9275400612C11 /* ListTableDataSourceTests.swift */; };
+		B9159F171CEA137B00612C11 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9159F151CEA12B800612C11 /* Mocks.swift */; };
 		B91EF9E71BF2558F00EFBE64 /* ManagedObjectContextFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91EF9E61BF2558F00EFBE64 /* ManagedObjectContextFactory.swift */; };
 		B92C612C1C0A61D100092588 /* TableSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92C612B1C0A61D100092588 /* TableSettingsViewController.swift */; };
 		B92C612E1C0ABA1600092588 /* DataViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92C612D1C0ABA1600092588 /* DataViewController.swift */; };
@@ -66,6 +68,8 @@
 		7C985910B024005B74D914CC /* Pods_FetchedResultsCoordinator_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FetchedResultsCoordinator_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8A83FBB517DCC0F8B91EA41 /* Pods-FetchedResultsDataSource_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FetchedResultsDataSource_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-FetchedResultsDataSource_Example/Pods-FetchedResultsDataSource_Example.release.xcconfig"; sourceTree = "<group>"; };
 		B9159F0E1CE8791C00612C11 /* Test.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Test.xcdatamodel; sourceTree = "<group>"; };
+		B9159F121CE9275400612C11 /* ListTableDataSourceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListTableDataSourceTests.swift; sourceTree = "<group>"; };
+		B9159F151CEA12B800612C11 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		B91EF9E61BF2558F00EFBE64 /* ManagedObjectContextFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagedObjectContextFactory.swift; sourceTree = "<group>"; };
 		B92C61291C08CC2B00092588 /* SimpleCollectionViewDataSourceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleCollectionViewDataSourceTests.m; sourceTree = "<group>"; };
 		B92C612B1C0A61D100092588 /* TableSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableSettingsViewController.swift; sourceTree = "<group>"; };
@@ -169,13 +173,15 @@
 			isa = PBXGroup;
 			children = (
 				B98AFBA81CB34FAA00E532C1 /* FetchedResultsCoordinatorTests.swift */,
-				B9463FA11CB7E99600C7E28B /* TableViewTests.swift */,
-				B94D36761CE4C73500DA9A09 /* TableSelectionTests.swift */,
-				B9463FA31CB7E9A100C7E28B /* CollectionViewTests.swift */,
 				B9C888BB1BFF653300E7FE63 /* FetchedResultsCoordinatorTableTests.m */,
 				B9AFF5D71C17AF51007C67EB /* FetchedResultsCoordinatorCollectionTests.m */,
+				B9463FA11CB7E99600C7E28B /* TableViewTests.swift */,
+				B9463FA31CB7E9A100C7E28B /* CollectionViewTests.swift */,
 				B98494FD1C0F3CAE007A3360 /* FetchedTableDataSourceTests.m */,
 				B92C61291C08CC2B00092588 /* SimpleCollectionViewDataSourceTests.m */,
+				B9159F121CE9275400612C11 /* ListTableDataSourceTests.swift */,
+				B94D36761CE4C73500DA9A09 /* TableSelectionTests.swift */,
+				B9159F151CEA12B800612C11 /* Mocks.swift */,
 				B9159F0D1CE8791C00612C11 /* Test.xcdatamodeld */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				B9C888BA1BFF653200E7FE63 /* FetchedResultsCoordinator_Tests-Bridging-Header.h */,
@@ -476,6 +482,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B9463F9F1CB7249100C7E28B /* FetchedResultsCoordinatorCollectionTests.m in Sources */,
+				B9159F141CE9285A00612C11 /* ListTableDataSourceTests.swift in Sources */,
 				B9159F111CE87A7200612C11 /* Test.xcdatamodeld in Sources */,
 				B95FD9701CC6B8F700C395CF /* FetchedResultsCoordinatorTests.swift in Sources */,
 				B92EC8661CBF3D4600A2E060 /* SimpleCollectionViewDataSourceTests.m in Sources */,
@@ -485,6 +492,7 @@
 				B94D36771CE4C73500DA9A09 /* TableSelectionTests.swift in Sources */,
 				B9FDF1E41CE114A400E579DB /* FetchedTableDataSourceTests.m in Sources */,
 				B9159F101CE87A3800612C11 /* ManagedObjectContextFactory.swift in Sources */,
+				B9159F171CEA137B00612C11 /* Mocks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

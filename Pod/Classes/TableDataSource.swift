@@ -19,8 +19,6 @@ public protocol TableCellConfigurator {
 public class ListTableDataSource<ObjectType:Equatable,CellType:UITableViewCell>: NSObject, UITableViewDataSource {
 
     public private(set) var data: [ObjectType]
-    public var systemHeaders: Bool = false
-    public var tableIndex: Bool = false
     public var defaultSectionTitle: String?
     
     private var configurator: AnyTableCellConfigurator<ObjectType,CellType>

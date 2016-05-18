@@ -6,66 +6,6 @@ import Nimble
 @testable import FetchedResultsCoordinator
 import CoreData
 
-enum CollectionViewInvocation: Equatable {
-    case InsertSections( NSIndexSet )
-    case DeleteSections( NSIndexSet )
-    case InsertItemssAtIndexPaths( indexPaths:[NSIndexPath] )
-    case DeleteItemssAtIndexPaths( indexPaths:[NSIndexPath] )
-    case ReloadItemssAtIndexPaths( indexPaths: [NSIndexPath] )
-    case MoveItemsAtIndexPath(indexPath: NSIndexPath, newIndexPath: NSIndexPath)
-    case PerformBatchUpdates
-}
-
-func ==(lhs: CollectionViewInvocation, rhs: CollectionViewInvocation) -> Bool {
-    switch (lhs,rhs) {
-    case let (.InsertSections(lhsIndexSet), .InsertSections(rhsIndexSet)) where lhsIndexSet == rhsIndexSet:return true
-    case let (.DeleteSections(lhsIndexSet), .DeleteSections(rhsIndexSet)) where lhsIndexSet == rhsIndexSet:return true
-    case let (.InsertItemssAtIndexPaths(lhsIndexPaths), .InsertItemssAtIndexPaths(rhsIndexPaths)) where lhsIndexPaths == rhsIndexPaths:return true
-    case let (.DeleteItemssAtIndexPaths(lhsIndexPaths), .DeleteItemssAtIndexPaths(rhsIndexPaths)) where lhsIndexPaths == rhsIndexPaths:return true
-    case let (.ReloadItemssAtIndexPaths(lhsIndexPaths), .ReloadItemssAtIndexPaths(rhsIndexPaths)) where lhsIndexPaths == rhsIndexPaths:return true
-    case let (.MoveItemsAtIndexPath(lhsIndexPaths), .MoveItemsAtIndexPath(rhsIndexPaths)) where lhsIndexPaths == rhsIndexPaths:return true
-    case (.PerformBatchUpdates,.PerformBatchUpdates):return true
-    default: return false
-    }
-}
-
-
-class SpyCollectionView: UICollectionView {
-    
-    var capturedCalls: [CollectionViewInvocation] = []
-    
-    override func insertItemsAtIndexPaths(indexPaths: [NSIndexPath]) {
-        capturedCalls.append(.InsertItemssAtIndexPaths( indexPaths: indexPaths ))
-    }
-    
-    override func deleteItemsAtIndexPaths(indexPaths: [NSIndexPath]) {
-        capturedCalls.append(.DeleteItemssAtIndexPaths(indexPaths: indexPaths))
-    }
-    
-    override func reloadItemsAtIndexPaths(indexPaths: [NSIndexPath]) {
-        capturedCalls.append(.ReloadItemssAtIndexPaths(indexPaths: indexPaths))
-    }
-    
-    override func moveItemAtIndexPath(indexPath: NSIndexPath, toIndexPath newIndexPath: NSIndexPath) {
-        capturedCalls.append(.MoveItemsAtIndexPath(indexPath: indexPath, newIndexPath: newIndexPath))
-    }
-    
-    override func performBatchUpdates(updates: (() -> Void)?, completion: ((Bool) -> Void)?) {
-        capturedCalls.append(.PerformBatchUpdates)
-        updates?()
-        completion?(true)
-    }
-    
-    override func insertSections(sections: NSIndexSet) {
-        capturedCalls.append(.InsertSections(sections))
-    }
-    
-    override func deleteSections(sections: NSIndexSet) {
-        capturedCalls.append(.DeleteSections(sections))
-    }
-    
-}
-
 class CollectionViewTests: QuickSpec {
     
     override func spec() {

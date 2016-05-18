@@ -4,6 +4,7 @@
 #import <Expecta/Expecta.h>
 #import <OCMock/OCMock.h>
 #import <CoreData/CoreData.h>
+#import <CoreData/NSFetchedResultsController.h>
 
 #import "FetchedResultsCoordinator-swift.h"
 
@@ -39,11 +40,27 @@ describe(@"FetchedTableDataSource", ^{
         OCMStub([mockFRC sections]);
         expect([dataSource sectionInfoForSection:4]).to.beNil();
     });
+    
+    it(@"should return 1 section if there are no sections in the FRC yet", ^{
+        OCMStub([mockFRC sections]);
+        expect([dataSource numberOfSectionsInTableView:mockTableView]).to.equal(1);
+    });
 
+    it(@"should have the same sections as the FRC", ^{
+        id mockSection = OCMProtocolMock(@protocol(NSFetchedResultsSectionInfo));
+        OCMStub([mockFRC sections]).andReturn(@[mockSection]);
+        XCTAssertEqualObjects([dataSource sectionInfoForSection:0], mockSection);
+    });
+       
     it(@"should have the same number of sections as the FRC", ^{
         id mockSection = OCMProtocolMock(@protocol(NSFetchedResultsSectionInfo));
         OCMStub([mockFRC sections]).andReturn(@[mockSection]);
         expect([dataSource numberOfSectionsInTableView:mockTableView]).to.equal(1);
+    });
+
+    it(@"should return 0 rows if there are no sections in the FRC yet", ^{
+        OCMStub([mockFRC sections]);
+        expect([dataSource tableView:mockTableView numberOfRowsInSection:0]).to.equal(0);
     });
 
     it(@"should match the FRC number of objects in section", ^{

@@ -6,64 +6,6 @@ import Nimble
 @testable import FetchedResultsCoordinator
 import CoreData
 
-protocol SpyFRCObject: class {
-    var indexPath: NSIndexPath? {get}
-}
-
-class NoObject: AnyObject {}
-
-class SpyFRC<T:SpyFRCObject>: NSFetchedResultsController {
-    
-    var performFetchedCalled = false
-
-    override func performFetch() throws {
-        performFetchedCalled = true
-    }
-
-    var objects: [T] = []
-    
-    override func objectAtIndexPath(indexPath: NSIndexPath) -> AnyObject {
-        // this is a bit weird, to override the method we can't add throws or any way to feedback that there is no object at this index.  In reality the program would crash with a runtime error.
-        return objects.filter{$0.indexPath == indexPath}.first ?? NoObject()
-    }
-    
-    override func indexPathForObject(object: AnyObject) -> NSIndexPath? {
-        return objects.filter{object === $0}.first?.indexPath
-    }
-    
-    override init() {
-        super.init()
-    }
-}
-
-class SpyCoordinatee: Coordinatable {
-    
-    var reloadDataCalled = false
-    var appliedChangeSet: ChangeSet?
-    
-    func reloadData() {
-        reloadDataCalled = true
-    }
-    
-    func apply( changeSet: ChangeSet ) {
-        appliedChangeSet = changeSet
-    }
-
-}
-
-extension FetchedObjectChange:Equatable {}
-
-public func ==(lhs: FetchedObjectChange, rhs: FetchedObjectChange) -> Bool {
-    switch (lhs,rhs) {
-    case let (.Insert(lhsIndexPath), .Insert(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
-    case let (.Delete(lhsIndexPath), .Delete(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
-    case let (.Move(lhsIndexPath), .Move(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
-    case let (.Update(lhsIndexPath), .Update(rhsIndexPath)) where lhsIndexPath == rhsIndexPath:return true
-    case (.CellConfigure, .CellConfigure):return true
-    default: return false
-    }
-}
-
 class MockItem: NSManagedObject, SpyFRCObject {
     var indexPath: NSIndexPath?
 }
@@ -102,6 +44,5 @@ class FetchedResultsCoordinatorTests: QuickSpec {
         }
 
     }
-    
     
 }

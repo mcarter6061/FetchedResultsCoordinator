@@ -17,18 +17,6 @@ func ==(lhs: ListItem, rhs: ListItem) -> Bool {
 
 
 
-class SpyConfigurator<T>: TableCellConfigurator {
-
-    func configureCell( cell: UITableViewCell, withObject object: T, atIndexPath indexPath: NSIndexPath ) {
-        
-    }
-    
-    func cellReuseIdentifierForObject( object: T, atIndexPath indexPath: NSIndexPath ) -> String {
-        return "identifier"
-    }
-
-}
-
 class ListTableSelectionTests: QuickSpec {
     
     override func spec() {
