@@ -68,7 +68,7 @@ There is more boilerplate code to implement `UITableViewDataSource` and `UIColle
 The `SimpleTableDataSource` type is generic across the `NSManagedObject` model object sublcass, and the custom `UITableViewCell` subclass for the table view cells. For example, if there is an `AnimalCell` which is a `UITableViewCell` subclass:
 
 ```swift
-tableViewDataSource = SimpleTableDataSource<Animal,AnimalCell>( cellConfigurator: self, fetchedResultsController: fetchedResultsController )
+tableViewDataSource = FetchedTableDataSource<Animal,AnimalCell>( cellConfigurator: self, fetchedResultsController: fetchedResultsController )
 tableView.dataSource = tableViewDataSource
 ```
 
@@ -78,36 +78,36 @@ To allow custom configuration of the table view cells, a `cellConfigurator` inst
 ```swift
 public protocol TableCellConfigurator {
     
-    associatedtype ManagedObjectType: NSManagedObject
+    associatedtype ObjectType
     associatedtype CellType: UITableViewCell
    
-    func configureCell( cell: CellType, withManagedObject managedObject: ManagedObjectType )
+    func configureCell( cell: CellType, withObject object: ObjectType, atIndexPath indexPath: NSIndexPath )
     
-    func cellReuseIdentifierForManagedObject( managedObject: ManagedObjectType ) -> String
+    func cellReuseIdentifierForObject( object: ObjectType, atIndexPath indexPath: NSIndexPath ) -> String
 }
 ```
 
-There are two *associated types* which will be supplied by the `TableCellConfigurator` implementation, which will be the same types specified in the *generic argument list* for the `SimpleTableDataSource` instance.  ie. For a FRC fetching `Animal` objects, the type conforming to `TableCellConfigurator` would implement something like:
+There are two *associated types* which will be supplied by the `TableCellConfigurator` implementation, which will be the same types specified in the *generic argument list* for the `FetchedTableDataSource` instance.  ie. For a FRC fetching `Animal` objects, the type conforming to `TableCellConfigurator` would implement something like:
 
 ```swift
-func configureCell( cell: AnimalCell, withManagedObject managedObject: Animal ) { 
-// cell configuration
-cell.animalName = managedObject.name
-... 
+func configureCell( cell: AnimalCell, withObject object: Animal, atIndexPath indexPath: NSIndexPath ) { 
+    // cell configuration
+    cell.animalName = managedObject.name
+    ... 
 }
 
-func cellReuseIdentifierForManagedObject( managedObject: Animal ) -> String { 
+func cellReuseIdentifierForManagedObject( object: Animal, atIndexPath indexPath: NSIndexPath ) -> String { 
     return "AnimalCellReuseIdentifier"
 }
 ```
 
-The `SimpleTableDataSource` will use the identifier string returned from `cellReuseIdentifierForManagedObject` to dequeue cells, and it will call the `configureCell` to give you a chance to configure the cell with the data from the model object for that row.
+The `FetchedTableDataSource` will use the identifier string returned from `cellReuseIdentifierForManagedObject` to dequeue cells, and it will call the `configureCell` to give you a chance to configure the cell with the data from the model object for that row.
 
-Implementing those two methods and hooking up a `SimpleTableDataSource` instance to the table view's `dataSource` property is enough to get a table view up and running. Be aware that the `dataSource` property on `UITableView` is weak, which means you will need to hold another strong reference to the instance elsewhere.
+Implementing those two methods and hooking up a `FetchedTableDataSource` instance to the table view's `dataSource` property is enough to get a table view up and running. Be aware that the `dataSource` property on `UITableView` is weak, which means you will need to hold another strong reference to the instance elsewhere.
 
 `cellReuseIdentifierForManagedObject` can just return a hardcoded identifier if the table only has one prototype cell.  This must be the cell's reuse identifier in your xib / storyboard.  If the table has multiple prototype cells the method should return the reuse identifier that applies to the row for the given associated model object.  In this case the `CellType` will have to be `UITableViewCell` and downcast to the cell subclass appropriately in the `configureCell` implementation.
 
-If you are using a system `UITableViewCell` instead of a custom subclass ( ie a Basic, Right Detail, Left Detail, or Subtitle style cell), just use `UITableViewCell` as the `CellType` in `configureCell` and in the `SimpleTableDataSource` generic argument list.
+If you are using a system `UITableViewCell` instead of a custom subclass ( ie a Basic, Right Detail, Left Detail, or Subtitle style cell), just use `UITableViewCell` as the `CellType` in `configureCell` and in the `FetchedTableDataSource` generic argument list.
 
 #### Section headers and section index
 The data source also supports `UITableView` system headers and section indexes based on FRC section indexes.
