@@ -66,7 +66,7 @@ class PlaygroundViewController: UITableViewController {
     
     lazy var coodinator: FetchedResultsCoordinator<Arrival> = FetchedResultsCoordinator(coordinatee: self.tableView, fetchedResultsController: self.fetchedResultsController)
     
-    lazy var dataSource:SimpleTableDataSource<Arrival,SubtitleCell> = SimpleTableDataSource(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
+    lazy var dataSource:FetchedTableDataSource<Arrival,SubtitleCell> = FetchedTableDataSource(cellConfigurator: self, fetchedResultsController: self.fetchedResultsController)
     
 
     override func viewDidLoad() {
@@ -94,14 +94,13 @@ extension PlaygroundViewController: TableCellConfigurator {
     enum Constants {
         static let CellIdentifier = "CellReuseIdentifier"
     }
-    
-    func cellReuseIdentifierForManagedObject(managedObject: Arrival) -> String {
+    func cellReuseIdentifierForObject( object: Arrival, atIndexPath indexPath: NSIndexPath ) -> String {
         return Constants.CellIdentifier
     }
     
-    func configureCell(cell: SubtitleCell, withManagedObject managedObject: Arrival) {
-        
-        switch managedObject.timeToStation as? Int {
+    func configureCell( cell: SubtitleCell, withObject object: Arrival, atIndexPath indexPath: NSIndexPath ) {
+    
+        switch object.timeToStation as? Int {
         case nil:
             cell.textLabel?.text = "Missing Data"
         case let secondsToArrival? where secondsToArrival == 0:
@@ -112,15 +111,15 @@ extension PlaygroundViewController: TableCellConfigurator {
             cell.textLabel?.text = String(format: "Arriving in %02d:%02d", minutes, seconds )
         }
         
-        if let secondsToArrival = managedObject.timeToStation as? Int {
+        if let secondsToArrival = object.timeToStation as? Int {
             if secondsToArrival == 0 {
                 
             }
         }
         
-        cell.detailTextLabel?.text = managedObject.platformName ?? "Unknown Platform"
+        cell.detailTextLabel?.text = object.platformName ?? "Unknown Platform"
         
-        cell.backgroundColor = colourForLine( managedObject.lineName )
+        cell.backgroundColor = colourForLine( object.lineName )
     }
     
 }

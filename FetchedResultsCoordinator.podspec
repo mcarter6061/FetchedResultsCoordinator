@@ -18,6 +18,7 @@ Pod::Spec.new do |s|
   s.author           = { "Mark Carter" => "mark@deeperdigital.co.uk" }
   s.source           = { :git => "https://github.com/mcarter6061/FetchedResultsCoordinator.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/mjark'
+  s.pod_target_xcconfig = { 'ENABLE_TESTABILITY' => 'YES' }
 
   s.platform     = :ios, '8.0'
   s.requires_arc = true
